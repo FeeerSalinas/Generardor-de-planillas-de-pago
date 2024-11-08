@@ -1,0 +1,74 @@
+﻿@model ProyectoANF.ViewModel.LoginVM;
+@{
+    Layout = null;
+}
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+        body {
+            display: flex;  
+            justify-content: center; 
+            align-items: center; 
+            background-color: #f8f9fa;
+            background-image: url('/Imagenes/fondo.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .card {
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); 
+            border-radius: 10px;
+            height: auto; 
+            width: 500px;
+        }
+
+        .card-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .form-control {
+            border-radius: 5px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+            a:hover {
+                text-decoration: underline;
+            }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            Iniciar Sesión
+        </div>
+        <div class="card-body">
+            <form asp-controller="Acceso" asp-action="Login" method="post">
+                <input class="form-control mb-3" type="text" placeholder="Nombre de usuario" required asp-for="NombreUsuario" />
+                <input class="form-control mb-3" type="password" placeholder="Contraseña" required asp-for="Contraseña" />
+                <div class="d-grid gap-2 mb-3">
+                    <button class="btn btn-primary">Iniciar sesión</button>
+                </div>
+                @if (ViewData["Mensaje"] != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @ViewData["Mensaje"]
+                    </div>
+                }
+                No tienes una cuenta? <a asp-controller="Acceso" asp-action="Registrarse">Regístrate ya!</a>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

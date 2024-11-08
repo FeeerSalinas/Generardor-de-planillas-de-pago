@@ -1,0 +1,78 @@
+﻿@model ProyectoANF.Models.Trabajadore
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <title>Agregar un empleado</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+            border-radius: 10px;
+            height: auto; /* Permite que la altura sea dinámica según el contenido */
+            width: 500px;
+        }
+
+        .card-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .form-control {
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            Agrega un empleado
+        </div>
+        <div class="card-body">
+            <form asp-controller="Trabajadores" asp-action="AgregarTrabajador" method="post">
+                <input class="form-control mb-3" type="text" placeholder="Nombre completo" required asp-for="Nombre" />
+                <input class="form-control mb-3" type="text" placeholder="Dui sin guion" required maxlength="10" asp-for="Dui" />
+                <input class="form-control mb-3" type="text" placeholder="Numero de NIT" required maxlength="17" asp-for="Nit" />
+                <input class="form-control mb-3" type="text" placeholder="Numero de AFP" required maxlength="20" asp-for="Afp" />
+                <input class="form-control mb-3" type="text" placeholder="Numero de ISSS" required maxlength="15" asp-for="Isss" />
+                <input class="form-control mb-3" type="text" placeholder="Cargo" required asp-for="Cargo" />
+                <input class="form-control mb-3" type="number" placeholder="Salario" asp-for="SalarioBase" />
+                <input class="form-control mb-3" type="Date" required  asp-for="FechaContratacion" />
+
+                <div class="d-grid gap-2 mb-3">
+                    <button class="btn btn-primary">Regístrate</button>
+                </div>
+                @if (ViewData["Mensaje"] != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @ViewData["Mensaje"]
+                    </div>
+                }
+                else
+                {
+                    @if (ViewData["Completado"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @ViewData["Completado"]
+                        </div>
+                    }
+                }
+            </form>
+            <a asp-controller="Home" asp-action="Index">Volver a inicio</a>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

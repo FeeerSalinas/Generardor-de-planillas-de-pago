@@ -1,0 +1,98 @@
+﻿@using System.Security.Claims;
+
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = null;
+}
+
+
+<html>
+<head>
+    <title>Registrarse</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+
+        .container{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh
+        }
+
+        .card{
+            transition: transform 0.3s;
+        }
+        .card:hover{
+            transform: scale(1.05);
+        }
+        .card-icon{
+            font-size: 3rem;
+            color: #007bff;
+        }
+        a{
+            text-decoration: none;
+            color: black;
+        }
+    </style>   
+
+</head>
+<body>
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-2 g-4 text-center">
+            <div class="col">
+                <a asp-controller="Trabajadores" asp-action="Index">
+                    <div class="card">
+                        <div class="card-body">
+                            <i class="fas fa-user card-icon"></i>
+                            <h5>Ver lista de empleados</h5>
+                            <p>Ingresa aquí para ver todos los empleados</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col">
+                <a asp-controller="Trabajadores" asp-action="AgregarTrabajador">
+                    <div class="card">
+                        <div class="card-body">
+                            <i class="fas fa-user-plus card-icon"></i>
+                            <h5>Registrar nuevos empleados</h5>
+                            <p>Ingresa aquí para registrar nuevos empleados</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col">
+                <a>
+                    <div class="card">
+                        <div class="card-body">
+                            <i class="fa-solid fa-dollar-sign card-icon"></i>
+                            <h5>Generar planilla a un emplado</h5>
+                            <p>Ingresa aquí para registrar nuevos empleados</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col">
+                <a>
+                    <div class="card">
+                        <div class="card-body">
+                            <i class="fas fa-user-plus card-icon"></i>
+                            <h5>Registrar nuevos empleados</h5>
+                            <p>Ingresa aquí para registrar nuevos empleados</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
