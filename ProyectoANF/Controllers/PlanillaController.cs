@@ -77,7 +77,7 @@ namespace ProyectoANF.Controllers
                     {
                         modelo.Renta = 0;
                     }
-                    if (sobreElExceso >= 472.01m && sobreElExceso <= 895.24m)
+                    else if (sobreElExceso >= 472.01m && sobreElExceso <= 895.24m)
                     {
                         modelo.Renta = (sobreElExceso-472)*0.1m + 17.67m;
                     }
@@ -87,7 +87,7 @@ namespace ProyectoANF.Controllers
                     }
                     else if (sobreElExceso >= 2038.11m)
                     {
-                        modelo.Renta = (sobreElExceso * 0.3m) + 288.57m;
+                        modelo.Renta = (sobreElExceso-2038.10m)*0.3m + 288.57m;
                     }
                  
                     modelo.SalarioNeto = modelo.SalarioBruto - modelo.Isss - modelo.Afp - modelo.Renta;
