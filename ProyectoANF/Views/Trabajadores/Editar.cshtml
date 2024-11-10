@@ -1,0 +1,245 @@
+﻿@model ProyectoANF.Models.Trabajadore
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar empleado</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .card {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #4a90e2, #63b3ed);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0 !important;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 1.5px solid #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus {
+                border-color: #4a90e2;
+                box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4a90e2, #63b3ed);
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+            }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+
+        .home-link {
+            display: inline-block;
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: color 0.2s ease;
+        }
+
+            .home-link:hover {
+                color: #2d3748;
+            }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+            input[type="number"]::-webkit-outer-spin-button,
+            input[type="number"]::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+        .input-icon {
+            position: relative;
+        }
+
+            .input-icon i {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #718096;
+            }
+
+            .input-icon input {
+                padding-left: 2.5rem;
+            }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-user-edit me-2"></i>Editar Empleado
+        </div>
+        <div class="card-body">
+            <form asp-controller="Trabajadores" asp-action="Editar" method="post">
+                <input asp-for="TrabajadorId" type="hidden" />
+
+                <div class="form-group">
+                    <label class="form-label" for="Nombre">Nombre completo</label>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                        <input class="form-control" type="text" placeholder="Ej: Juan Pérez" required asp-for="Nombre" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Dui">DUI</label>
+                            <div class="input-icon">
+                                <i class="fas fa-id-card"></i>
+                                <input class="form-control" type="text" placeholder="123456789" required maxlength="10" asp-for="Dui" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Nit">NIT</label>
+                            <div class="input-icon">
+                                <i class="fas fa-file-alt"></i>
+                                <input class="form-control" type="text" placeholder="1234-567890-123-4" required maxlength="17" asp-for="Nit" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Afp">Número AFP</label>
+                            <div class="input-icon">
+                                <i class="fas fa-shield-alt"></i>
+                                <input class="form-control" type="text" placeholder="12345678901234" required maxlength="20" asp-for="Afp" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Isss">Número ISSS</label>
+                            <div class="input-icon">
+                                <i class="fas fa-hospital"></i>
+                                <input class="form-control" type="text" placeholder="123456789" required maxlength="15" asp-for="Isss" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Cargo">Cargo</label>
+                            <div class="input-icon">
+                                <i class="fas fa-briefcase"></i>
+                                <input class="form-control" type="text" placeholder="Ej: Gerente" required asp-for="Cargo" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="SalarioBase">Salario Base</label>
+                            <div class="input-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                                <input class="form-control" type="number" placeholder="0.00" required step="0.01" asp-for="SalarioBase" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="FechaContratacion">Fecha de Contratación</label>
+                    <div class="input-icon">
+                        <i class="fas fa-calendar"></i>
+                        <input class="form-control" type="date" required asp-for="FechaContratacion" />
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                    </button>
+                </div>
+
+                @if (ViewData["Mensaje"] != null)
+                {
+                    <div class="alert alert-danger mt-3" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>@ViewData["Mensaje"]
+                    </div>
+                }
+                else if (ViewData["Completado"] != null)
+                {
+                    <div class="alert alert-success mt-3" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>@ViewData["Completado"]
+                    </div>
+                }
+            </form>
+            <a asp-controller="Home" asp-action="Index" class="home-link">
+                <i class="fas fa-arrow-left me-2"></i>Volver a inicio
+            </a>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

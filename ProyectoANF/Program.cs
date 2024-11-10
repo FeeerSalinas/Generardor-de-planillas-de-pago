@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using ProyectoANF.Models;
 
+
 namespace ProyectoANF
 {
     public class Program
@@ -44,6 +45,9 @@ namespace ProyectoANF
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Acceso}/{action=Login}/{id?}");
+
+            IWebHostEnvironment env = app.Environment;
+            Rotativa.AspNetCore.RotativaConfiguration.Setup(env.WebRootPath, "../Rotativa/Windows");
 
             app.Run();
         }

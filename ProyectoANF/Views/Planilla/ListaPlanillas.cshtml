@@ -1,0 +1,301 @@
+﻿@model PaginatedList<ProyectoANF.Models.Planilla>
+
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+<div class="container-fluid py-5 bg-light">
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4 text-primary fw-bold">
+                        <i class="bi bi-file-earmark-text me-2"></i>Registro de Planillas
+                    </h2>
+                    <a href="@Url.Action("Index", "Home")" class="home-link">
+                        <i class="fas fa-arrow-left me-2"></i>Volver a inicio
+                    </a>
+                    <!-- Filtro y Botón Nueva Planilla -->
+                    <div class="row mb-4 align-items-center">
+                        <div class="col-md-6">
+                            <div class="input-group shadow-sm">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="bi bi-search text-primary"></i>
+                                </span>
+                                <select class="form-select border-start-0" id="filtroTrabajador">
+                                    <option value="">Todos los empleados</option>
+                                    @{
+                                        var trabajadoresUnicos = Model
+                                        .Select(p => p.Trabajador)
+                                        .Where(t => t != null)
+                                        .DistinctBy(t => t.TrabajadorId)
+                                        .OrderBy(t => t.Nombre);
+
+                                        foreach (var trabajador in trabajadoresUnicos)
+                                        {
+                                            <option value="@trabajador.TrabajadorId">@trabajador.Nombre</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a asp-controller="Planilla" asp-action="CrearPlanilla"
+                               class="btn btn-primary btn-lg shadow-sm">
+                                <i class="bi bi-plus-circle me-2"></i>Nueva Planilla
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de planillas -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle" id="tablaPlanillas">
+                            <thead>
+                                <tr class="bg-primary text-white">
+                                    
+                                    <th>Empleado</th>
+                                    <th class="text-center">Mes/Año</th>
+                                    <th class="text-center">Días</th>
+                                    <th class="text-center">H. Diurnas</th>
+                                    <th class="text-center">H. Nocturnas</th>
+                                    <th class="text-center">Vacaciones</th>
+                                    <th class="text-center">Indemnización</th>
+                                    <th class="text-center">Aguinaldo</th>
+                                    <th class="text-end">Total Mensual</th>
+                                    <th class="text-end">ISSS</th>
+                                    <th class="text-end">AFP</th>
+                                    <th class="text-end">Renta</th>
+                                    <th class="text-end">Total a Pagar</th>
+                                    <th class="text-center">Fecha</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white">
+                                @foreach (var item in Model)
+                                {
+                                    <tr data-empleado-id="@item.TrabajadorId" class="border-bottom">
+                                      
+                                        <td class="fw-semibold">@(item.Trabajador?.Nombre ?? "N/A")</td>
+                                        <td class="text-center">@item.Mes/@item.Año</td>
+                                        <td class="text-center">@item.DiasTrabajados</td>
+                                        <td class="text-center">@(item.HorasDiurnas?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-center">@(item.HorasNocturnas?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-center">@(item.Vacaciones?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-center">@(item.Indemnizacion?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-center">@(item.Aguinaldo?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-end fw-bold">@(item.SalarioBruto?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-end text-danger">@(item.Isss?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-end text-danger">@(item.Afp?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-end text-danger">@(item.Renta?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-end fw-bold text-success">@(item.SalarioNeto?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-center">
+                                            @(item.FechaGeneracion?.ToString("dd/MM/yyyy") ?? "N/A")
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group">
+                                                <a asp-controller="Planilla" asp-action="GenerarPDF"
+                                                   asp-route-id="@item.PlanillaId"
+                                                   class="btn btn-outline-danger btn-sm">
+                                                    <i class="bi bi-file-pdf me-1"></i>PDF
+                                                </a>
+                                                <a asp-controller="Planilla" asp-action="EditarPlanilla"
+                                                   asp-route-id="@item.PlanillaId"
+                                                   class="btn btn-outline-warning btn-sm">
+                                                    <i class="bi bi-pencil me-1"></i>Editar
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    <nav aria-label="Paginación" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            @if (Model.HasPreviousPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link shadow-sm" asp-action="ListaPlanillas"
+                                       asp-route-pageNumber="@(Model.PageIndex - 1)">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </span>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                if (i == Model.PageIndex)
+                                {
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link shadow-sm">@i</span>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link shadow-sm" asp-action="ListaPlanillas"
+                                           asp-route-pageNumber="@i">@i</a>
+                                    </li>
+                                }
+                            }
+
+                            @if (Model.HasNextPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link shadow-sm" asp-action="ListaPlanillas"
+                                       asp-route-pageNumber="@(Model.PageIndex + 1)">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<style>
+    .container-fluid {
+        background-color: #f8f9fa;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+
+    .table thead tr {
+        border-radius: 8px;
+    }
+
+    .table th {
+        font-weight: 600;
+        padding: 1rem;
+    }
+
+    .table td {
+        padding: 1rem;
+    }
+
+    .btn-group .btn {
+        margin: 0 2px;
+        border-radius: 6px;
+    }
+
+    .input-group {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .input-group-text {
+        border: 1px solid #dee2e6;
+        border-right: none;
+    }
+
+    .form-select {
+        border: 1px solid #dee2e6;
+        border-left: none;
+    }
+
+        .form-select:focus {
+            border-color: #dee2e6;
+            box-shadow: none;
+        }
+
+    .page-link {
+        border: none;
+        color: #6c757d;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        margin: 0 3px;
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--bs-primary);
+        color: white;
+    }
+
+    .btn-outline-danger:hover, .btn-outline-warning:hover {
+        color: white;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+        transition: background-color 0.2s ease-in-out;
+    }
+</style>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filtroTrabajador = document.getElementById('filtroTrabajador');
+            const tablaPlanillas = document.getElementById('tablaPlanillas');
+
+            filtroTrabajador.addEventListener('change', function () {
+                const empleadoId = this.value;
+                const filas = tablaPlanillas.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+                // Si no hay empleado seleccionado, mostrar todas las filas
+                if (!empleadoId) {
+                    Array.from(filas).forEach(fila => {
+                        fila.style.display = '';
+                    });
+                    return;
+                }
+
+                // Filtrar las filas según el empleado seleccionado
+                Array.from(filas).forEach(fila => {
+                    const filaEmpleadoId = fila.getAttribute('data-empleado-id');
+                    if (filaEmpleadoId === empleadoId) {
+                        fila.style.display = '';
+                    } else {
+                        fila.style.display = 'none';
+                    }
+                });
+            });
+
+            // Función para limpiar el filtro cuando se cambia de página
+            function limpiarFiltro() {
+                filtroTrabajador.value = '';
+                const filas = tablaPlanillas.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                Array.from(filas).forEach(fila => {
+                    fila.style.display = '';
+                });
+            }
+
+            // Agregar evento a los enlaces de paginación
+            document.querySelectorAll('.pagination .page-link').forEach(link => {
+                link.addEventListener('click', limpiarFiltro);
+            });
+        });
+    </script>

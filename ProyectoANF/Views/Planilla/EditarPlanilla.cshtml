@@ -1,0 +1,273 @@
+﻿@model ProyectoANF.Models.Planilla
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Planilla</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .card {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #4a90e2, #63b3ed);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0 !important;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 1.5px solid #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #4a90e2;
+                box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            }
+
+        .input-icon {
+            position: relative;
+        }
+
+            .input-icon i {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #718096;
+            }
+
+            .input-icon input, .input-icon select {
+                padding-left: 2.5rem;
+            }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+
+            .btn:hover {
+                transform: translateY(-2px);
+            }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #718096, #a0aec0);
+            border: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #48bb78, #68d391);
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 4px 12px rgba(113, 128, 150, 0.2);
+        }
+
+        .btn-success:hover {
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
+        }
+
+        .alert {
+            border-radius: 8px;
+            border: none;
+            margin-top: 1.5rem;
+        }
+
+        .section-title {
+            color: #2d3748;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-file-invoice-dollar me-2"></i>Editar Planilla
+        </div>
+        <div class="card-body">
+            <form asp-controller="Planilla" asp-action="EditarPlanilla" method="post">
+                <input type="hidden" asp-for="PlanillaId" />
+
+                <div class="section-title">
+                    <i class="fas fa-info-circle me-2"></i>Información General
+                </div>
+
+                <!-- Fila 1: Trabajador, Mes y Año -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="TrabajadorId" class="form-label">Trabajador</label>
+                            <div class="input-icon">
+                                <i class="fas fa-user"></i>
+                                <select asp-for="TrabajadorId" class="form-select"
+                                        asp-items="@(new SelectList((IEnumerable<ProyectoANF.Models.Trabajadore>)ViewData["Trabajadores"], "TrabajadorId", "Nombre", Model.TrabajadorId))">
+                                    <option value="">Seleccione un trabajador</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="Mes" class="form-label">Mes</label>
+                            <div class="input-icon">
+                                <i class="fas fa-calendar"></i>
+                                <input class="form-control" type="number" required min="1" max="12" asp-for="Mes" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="Año" class="form-label">Año</label>
+                            <div class="input-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                                <input class="form-control" type="number" required min="2000" max="2100" asp-for="Año" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <i class="fas fa-clock me-2"></i>Tiempo Laborado
+                </div>
+
+                <!-- Fila 2: Días trabajados y Horas extra -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="DiasTrabajados" class="form-label">Días trabajados</label>
+                            <div class="input-icon">
+                                <i class="fas fa-calendar-check"></i>
+                                <input class="form-control" type="number" required min="1" max="30" asp-for="DiasTrabajados" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="HorasDiurnas" class="form-label">Horas extra diurnas</label>
+                            <div class="input-icon">
+                                <i class="fas fa-sun"></i>
+                                <input class="form-control" type="number" required min="0" asp-for="HorasDiurnasCantidad" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="HorasNocturnas" class="form-label">Horas extra nocturnas</label>
+                            <div class="input-icon">
+                                <i class="fas fa-moon"></i>
+                                <input class="form-control" type="number" required min="0" asp-for="HorasNocturnasCantidad" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <i class="fas fa-money-bill-wave me-2"></i>Beneficios Adicionales
+                </div>
+
+                <!-- Fila 3: Vacaciones, Indemnización y Aguinaldo -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="Vacaciones" class="form-label">Vacaciones ($)</label>
+                            <div class="input-icon">
+                                <i class="fas fa-umbrella-beach"></i>
+                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Vacaciones" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="Indemnizacion" class="form-label">Indemnización ($)</label>
+                            <div class="input-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Indemnizacion" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label asp-for="Aguinaldo" class="form-label">Aguinaldo ($)</label>
+                            <div class="input-icon">
+                                <i class="fas fa-gift"></i>
+                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Aguinaldo" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-between mt-4">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                    <button class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Guardar Cambios
+                    </button>
+                </div>
+
+                @if (ViewData["Error"] != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>@ViewData["Error"]
+                    </div>
+                }
+                else if (ViewData["Completado"] != null)
+                {
+                    <div class="alert alert-success" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>@ViewData["Completado"]
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

@@ -1,0 +1,195 @@
+﻿@model ProyectoANF.Models.Trabajadore
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar empleado</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .card {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #e25c5c, #ed6363);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0 !important;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .info-group {
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.875rem;
+        }
+
+        .info-value {
+            color: #2d3748;
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .warning-text {
+            color: #e53e3e;
+            font-size: 1.1rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            font-weight: 500;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #e53e3e, #f56565);
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+            .btn-danger:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+            }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #718096, #a0aec0);
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+            .btn-secondary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(113, 128, 150, 0.2);
+            }
+
+        .home-link {
+            display: inline-block;
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: color 0.2s ease;
+        }
+
+            .home-link:hover {
+                color: #2d3748;
+            }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-user-times me-2"></i>Eliminar Empleado
+        </div>
+        <div class="card-body">
+            <div class="warning-text">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                ¿Está seguro que desea eliminar este empleado?
+            </div>
+
+            <div class="info-group">
+                <div class="info-label">Nombre completo</div>
+                <div class="info-value">@Model.Nombre</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-group">
+                        <div class="info-label">DUI</div>
+                        <div class="info-value">@Model.Dui</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-group">
+                        <div class="info-label">NIT</div>
+                        <div class="info-value">@Model.Nit</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="info-group">
+                        <div class="info-label">Cargo</div>
+                        <div class="info-value">@Model.Cargo</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-group">
+                        <div class="info-label">Salario Base</div>
+                        <div class="info-value">$@Model.SalarioBase.ToString("N2")</div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-controller="Trabajadores" asp-action="Eliminar" method="post">
+                <input type="hidden" asp-for="TrabajadorId" />
+                <input type="hidden" asp-for="Nombre" />
+                <input type="hidden" asp-for="Dui" />
+                <input type="hidden" asp-for="Nit" />
+                <input type="hidden" asp-for="Afp" />
+                <input type="hidden" asp-for="Isss" />
+                <input type="hidden" asp-for="Cargo" />
+                <input type="hidden" asp-for="SalarioBase" />
+                <input type="hidden" asp-for="FechaContratacion" />
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-2"></i>Confirmar Eliminación
+                    </button>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                </div>
+            </form>
+
+            <a asp-controller="Home" asp-action="Index" class="home-link">
+                <i class="fas fa-arrow-left me-2"></i>Volver a inicio
+            </a>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>

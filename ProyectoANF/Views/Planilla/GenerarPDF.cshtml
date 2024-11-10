@@ -1,0 +1,169 @@
+﻿@model ProyectoANF.Models.Planilla
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Constancia de Empleado - @Model.Trabajador?.Nombre</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            font-size: 12px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid black;
+            padding-bottom: 10px;
+        }
+
+        .company-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .document-title {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .period-info {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            margin: 15px 0 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        td {
+            padding: 5px;
+            border: 1px solid black;
+        }
+
+        .label-column {
+            width: 200px;
+            background-color: white;
+            font-weight: normal;
+        }
+
+        .value-column {
+            width: auto;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: left;
+            font-size: 10px;
+            border-top: 1px solid black;
+            padding-top: 20px;
+        }
+
+        .signature-line {
+            margin-top: 100px;
+            width: 50%;
+            border-top: 1px solid black;
+            text-align: center;
+            padding-top: 5px;
+        }
+
+        .company-footer {
+            margin-top: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <!-- Agregar la imagen del logo al principio -->
+        <img src="/Imagenes/logo.png" alt="Logo Mandaditos" style="max-height: 50px; margin-bottom: 10px;">
+        <div class="company-name">MANDADITOS SV, S.A DE C.V.</div>
+        <div class="document-title">Constancia de Empleado</div>
+    </div>
+
+    <div class="period-info">
+        <div>Periodo: @Model.Mes/@Model.Año</div>
+        <div>Fecha de generación: @DateTime.Now.ToString("yyyy-MM-dd")</div>
+    </div>
+
+    <div class="section-title">Información del Empleado</div>
+
+    <table>
+        <tr>
+            <td class="label-column">Nombre:</td>
+            <td class="value-column">@Model.Trabajador?.Nombre</td>
+        </tr>
+        <tr>
+            <td class="label-column">Número de Documento:</td>
+            <td class="value-column">@Model.Trabajador?.Dui</td>
+        </tr>
+        <tr>
+            <td class="label-column">Salario:</td>
+            <td class="value-column">$ @Model.Trabajador?.SalarioBase.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">Horas Diurnas:</td>
+            <td class="value-column">$ @Model.HorasDiurnas?.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">Horas Nocturnas:</td>
+            <td class="value-column">$ @Model.HorasNocturnas?.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">Vacaciones:</td>
+            <td class="value-column">$ @Model.Vacaciones?.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">Indemnización:</td>
+            <td class="value-column">$ @Model.Indemnizacion?.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">Aguinaldo:</td>
+            <td class="value-column">$ @Model.Aguinaldo?.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">Total mensual:</td>
+            <td class="value-column">$ @Model.SalarioBruto?.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">AFP Laboral:</td>
+            <td class="value-column">$ @Model.Afp?.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">ISSS Laboral:</td>
+            <td class="value-column">$ @Model.Isss?.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">Renta:</td>
+            <td class="value-column">$ @Model.Renta?.ToString("F2")</td>
+        </tr>
+        <tr>
+            <td class="label-column">Total a Pagar:</td>
+            <td class="value-column">$ @Model.SalarioNeto?.ToString("F2")</td>
+        </tr>
+    </table>
+
+    <div class="signature-line">F.</div>
+    <div class="company-footer">MANDADITOS, S.A DE C.V.</div>
+
+    <div class="footer">
+        <p>Nota: Estimado empleado, por este medio se hace de su conocimiento que la tasa de cotización al Sistema será del 7.25% por parte del trabajador, mientras que el aporte del Instituto Salvadoreño del Seguro Social (ISSS) será del 3% o $30.00 si su sueldo es mayor a $1,000.00, de igual forma, por sueldos mayores a $472.01 se hará su retención de renta respectiva.</p>
+    </div>
+</body>
+</html>

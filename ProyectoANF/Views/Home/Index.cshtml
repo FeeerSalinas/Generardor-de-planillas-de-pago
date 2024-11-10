@@ -6,39 +6,121 @@
 }
 
 
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Registrarse</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
     <style>
-
-        .container{
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh
+        body {
+            background-color: #f8f9fa;
+            background-image: url('/Imagenes/mandaditos.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            margin: 0;
+          
         }
 
-        .card{
-            transition: transform 0.3s;
+        .container {
+            
+            padding-top: 2rem;
+            padding-bottom: 2rem;
         }
-        .card:hover{
-            transform: scale(1.05);
+
+        .card {
+            margin-top: 3rem;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+            background: white;
         }
-        .card-icon{
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            }
+
+        .card-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .card-icon {
             font-size: 3rem;
-            color: #007bff;
+            color: #0d6efd;
+            margin-bottom: 1rem;
         }
-        a{
-            text-decoration: none;
-            color: black;
-        }
-    </style>   
 
+        .card h5 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+            .logout-btn:hover {
+                background-color: #c82333;
+            }
+
+        h1{
+            display: flex;
+            justify-content:center;
+            align-items: center;
+            text-align: center;
+        }
+        img{
+            width: 100px;
+            height: 300px;
+        }
+    </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light mb-4">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand" href="#">
+                <img src="/Imagenes/logo.png" alt="Mandaditos SV" class="img-fluid" style="max-height: 50px;">
+            </a>
+
+           
+            <h1 class="mx-auto">Mandaditos SV</h1>
+
+            <div class="ms-auto">
+                <a asp-controller="Home" asp-action="Salir" class="logout-btn">
+                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                </a>
+            </div>
+        </div>
+    </nav>
+
+
+
     <div class="container">
         <div class="row row-cols-1 row-cols-md-2 g-4 text-center">
             <div class="col">
@@ -52,7 +134,6 @@
                     </div>
                 </a>
             </div>
-
             <div class="col">
                 <a asp-controller="Trabajadores" asp-action="AgregarTrabajador">
                     <div class="card">
@@ -64,26 +145,24 @@
                     </div>
                 </a>
             </div>
-
             <div class="col">
-                <a>
+                <a asp-controller="Planilla" asp-action="CrearPlanilla">
                     <div class="card">
                         <div class="card-body">
                             <i class="fa-solid fa-dollar-sign card-icon"></i>
-                            <h5>Generar planilla a un emplado</h5>
-                            <p>Ingresa aquí para registrar nuevos empleados</p>
+                            <h5>Generar planilla a un empleado</h5>
+                            <p>Ingresa aquí para crear una planilla</p>
                         </div>
                     </div>
                 </a>
             </div>
-
             <div class="col">
-                <a>
+                <a asp-controller="Planilla" asp-action="ListaPlanillas">
                     <div class="card">
                         <div class="card-body">
-                            <i class="fas fa-user-plus card-icon"></i>
-                            <h5>Registrar nuevos empleados</h5>
-                            <p>Ingresa aquí para registrar nuevos empleados</p>
+                            <i class="fas fa-dollar-sign card-icon"></i>
+                            <h5>Ver lista de planillas</h5>
+                            <p>Ingresa aquí para ver la lista de planillas</p>
                         </div>
                     </div>
                 </a>
@@ -94,5 +173,4 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

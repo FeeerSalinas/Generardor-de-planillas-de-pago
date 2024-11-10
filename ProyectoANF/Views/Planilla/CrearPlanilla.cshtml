@@ -1,0 +1,213 @@
+﻿@model ProyectoANF.Models.Planilla
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear planilla</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .card {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #4a90e2, #63b3ed);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px 15px 0 0 !important;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            border: 1.5px solid #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                border-color: #4a90e2;
+                box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+            }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4a90e2, #63b3ed);
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+            }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .alert {
+            border-radius: 8px;
+            border: none;
+        }
+
+        .home-link {
+            display: inline-block;
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: color 0.2s ease;
+        }
+
+            .home-link:hover {
+                color: #2d3748;
+            }
+
+        /* Estilos para inputs numéricos */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+            input[type="number"]::-webkit-outer-spin-button,
+            input[type="number"]::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-user-plus me-2"></i>Agregar Empleado a Planilla
+        </div>
+        <div class="card-body">
+            <form asp-controller="Planilla" asp-action="CrearPlanilla" method="post">
+                <div class="form-group">
+                    <label class="form-label" for="TrabajadorId">Selecciona un trabajador</label>
+                    <select asp-for="TrabajadorId" class="form-select"
+                            asp-items="@(new SelectList((IEnumerable<ProyectoANF.Models.Trabajadore>)ViewData["Trabajadores"], "TrabajadorId", "Nombre"))">
+                        <option value="">Seleccione un trabajador</option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Mes">Mes</label>
+                            <input class="form-control" type="number" placeholder="1-12" required maxlength="2" min="1" max="12" asp-for="Mes" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Año">Año</label>
+                            <input class="form-control" type="number" placeholder="YYYY" required min="2000" max="2100" asp-for="Año" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="DiasTrabajados">Días trabajados</label>
+                    <input class="form-control" type="number" placeholder="1-30" required min="1" max="30" asp-for="DiasTrabajados" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="HorasDiurnasCantidad">Horas extra diurnas</label>
+                            <input class="form-control" type="number" placeholder="0+" required min="0" asp-for="HorasDiurnasCantidad" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="HorasNocturnasCantidad">Horas extra nocturnas</label>
+                            <input class="form-control" type="number" placeholder="0+" required min="0" asp-for="HorasNocturnasCantidad" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="Vacaciones">Vacaciones ($)</label>
+                            <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Vacaciones" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="Indemnizacion">Indemnización ($)</label>
+                            <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Indemnizacion" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label" for="Aguinaldo">Aguinaldo ($)</label>
+                            <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Aguinaldo" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Crear planilla
+                    </button>
+                </div>
+
+                @if (ViewData["Error"] != null)
+                {
+                    <div class="alert alert-danger mt-3" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>@ViewData["Error"]
+                    </div>
+                }
+                else if (ViewData["Completado"] != null)
+                {
+                    <div class="alert alert-success mt-3" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>@ViewData["Completado"]
+                    </div>
+                }
+            </form>
+            <a href="@Url.Action("Index", "Home")" class="home-link">
+                <i class="fas fa-arrow-left me-2"></i>Volver a inicio
+            </a>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</body>
+</html>
