@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using ProyectoANF.Models;
+using ProyectoANF.Services;
 
 
 namespace ProyectoANF
@@ -25,6 +26,8 @@ namespace ProyectoANF
                     options.LoginPath = "/Acceso/Login";
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(5); //para el tiempo de la cookie
                 });
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             var app = builder.Build();
 

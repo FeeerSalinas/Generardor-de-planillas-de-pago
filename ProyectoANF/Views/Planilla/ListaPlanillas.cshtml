@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-
 <div class="container-fluid py-5 bg-light">
     <div class="row justify-content-center">
         <div class="col-lg-11">
@@ -57,12 +56,15 @@
                         <table class="table table-hover align-middle" id="tablaPlanillas">
                             <thead>
                                 <tr class="bg-primary text-white">
-                                    
                                     <th>Empleado</th>
                                     <th class="text-center">Mes/Año</th>
                                     <th class="text-center">Días</th>
                                     <th class="text-center">H. Diurnas</th>
                                     <th class="text-center">H. Nocturnas</th>
+                                    <th class="text-center">Feriado</th>
+                                    <th class="text-center">Reintegro</th>
+                                    <th class="text-center">Incapacidad</th>
+                                    <th class="text-center">Permisos</th>
                                     <th class="text-center">Vacaciones</th>
                                     <th class="text-center">Indemnización</th>
                                     <th class="text-center">Aguinaldo</th>
@@ -79,12 +81,15 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr data-empleado-id="@item.TrabajadorId" class="border-bottom">
-                                      
                                         <td class="fw-semibold">@(item.Trabajador?.Nombre ?? "N/A")</td>
                                         <td class="text-center">@item.Mes/@item.Año</td>
                                         <td class="text-center">@item.DiasTrabajados</td>
                                         <td class="text-center">@(item.HorasDiurnas?.ToString("C") ?? "$0.00")</td>
                                         <td class="text-center">@(item.HorasNocturnas?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-center">@(item.Feriado?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-center">@(item.Reintegro?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-center">@(item.Incapacidad?.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-center">@(item.Permisos?.ToString("C") ?? "$0.00")</td>
                                         <td class="text-center">@(item.Vacaciones?.ToString("C") ?? "$0.00")</td>
                                         <td class="text-center">@(item.Indemnizacion?.ToString("C") ?? "$0.00")</td>
                                         <td class="text-center">@(item.Aguinaldo?.ToString("C") ?? "$0.00")</td>
@@ -103,6 +108,11 @@
                                                    class="btn btn-outline-danger btn-sm">
                                                     <i class="bi bi-file-pdf me-1"></i>PDF
                                                 </a>
+                                                <a asp-controller="Planilla" asp-action="EnviarPlanillaPorCorreo"
+                                                   asp-route-id="@item.PlanillaId"
+                                                   class="btn btn-outline-primary btn-sm">
+                                                    <i class="bi bi-envelope me-1"></i>Enviar
+                                                </a>
                                                 <a asp-controller="Planilla" asp-action="EditarPlanilla"
                                                    asp-route-id="@item.PlanillaId"
                                                    class="btn btn-outline-warning btn-sm">
@@ -114,6 +124,21 @@
                                 }
                             </tbody>
                         </table>
+                        @if (TempData["Success"] != null)
+                        {
+                            <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                                @TempData["Success"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+
+                        @if (TempData["Error"] != null)
+                        {
+                            <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+                                @TempData["Error"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
                     </div>
 
                     <!-- Paginación -->
@@ -173,7 +198,6 @@
                             }
                         </ul>
                     </nav>
-                   
                 </div>
             </div>
         </div>
@@ -253,49 +277,55 @@
         background-color: rgba(0, 123, 255, 0.05);
         transition: background-color 0.2s ease-in-out;
     }
+
+    /* Ajuste para la tabla con más columnas */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table th, .table td {
+        white-space: nowrap;
+        min-width: 100px;
+    }
 </style>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filtroTrabajador = document.getElementById('filtroTrabajador');
+        const tablaPlanillas = document.getElementById('tablaPlanillas');
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const filtroTrabajador = document.getElementById('filtroTrabajador');
-            const tablaPlanillas = document.getElementById('tablaPlanillas');
+        filtroTrabajador.addEventListener('change', function () {
+            const empleadoId = this.value;
+            const filas = tablaPlanillas.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
 
-            filtroTrabajador.addEventListener('change', function () {
-                const empleadoId = this.value;
-                const filas = tablaPlanillas.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
-                // Si no hay empleado seleccionado, mostrar todas las filas
-                if (!empleadoId) {
-                    Array.from(filas).forEach(fila => {
-                        fila.style.display = '';
-                    });
-                    return;
-                }
-
-                // Filtrar las filas según el empleado seleccionado
-                Array.from(filas).forEach(fila => {
-                    const filaEmpleadoId = fila.getAttribute('data-empleado-id');
-                    if (filaEmpleadoId === empleadoId) {
-                        fila.style.display = '';
-                    } else {
-                        fila.style.display = 'none';
-                    }
-                });
-            });
-
-            // Función para limpiar el filtro cuando se cambia de página
-            function limpiarFiltro() {
-                filtroTrabajador.value = '';
-                const filas = tablaPlanillas.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            if (!empleadoId) {
                 Array.from(filas).forEach(fila => {
                     fila.style.display = '';
                 });
+                return;
             }
 
-            // Agregar evento a los enlaces de paginación
-            document.querySelectorAll('.pagination .page-link').forEach(link => {
-                link.addEventListener('click', limpiarFiltro);
+            Array.from(filas).forEach(fila => {
+                const filaEmpleadoId = fila.getAttribute('data-empleado-id');
+                if (filaEmpleadoId === empleadoId) {
+                    fila.style.display = '';
+                } else {
+                    fila.style.display = 'none';
+                }
             });
         });
-    </script>
+
+        function limpiarFiltro() {
+            filtroTrabajador.value = '';
+            const filas = tablaPlanillas.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            Array.from(filas).forEach(fila => {
+                fila.style.display = '';
+            });
+        }
+
+        document.querySelectorAll('.pagination .page-link').forEach(link => {
+            link.addEventListener('click', limpiarFiltro);
+        });
+    });
+</script>

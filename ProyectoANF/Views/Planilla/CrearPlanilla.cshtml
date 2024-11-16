@@ -3,6 +3,7 @@
     Layout = null;
 }
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -98,7 +99,6 @@
                 color: #2d3748;
             }
 
-        /* Estilos para inputs numéricos */
         input[type="number"] {
             -moz-appearance: textfield;
         }
@@ -156,6 +156,37 @@
                         <div class="form-group">
                             <label class="form-label" for="HorasNocturnasCantidad">Horas extra nocturnas</label>
                             <input class="form-control" type="number" placeholder="0+" required min="0" asp-for="HorasNocturnasCantidad" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nuevos campos agregados -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Feriado">Feriado ($)</label>
+                            <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="FeriadoCantidad" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Reintegro">Reintegro ($)</label>
+                            <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Reintegro" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Incapacidad">Incapacidad ($)</label>
+                            <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Incapacidad" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label" for="Permisos">Permisos ($)</label>
+                            <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Permisos" />
                         </div>
                     </div>
                 </div>

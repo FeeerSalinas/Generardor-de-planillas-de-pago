@@ -28,13 +28,13 @@ public partial class Planilla
 
     public decimal? HorasDiurnas { get; set; }
 
-    [NotMapped]
+    
 
-    public int? HorasDiurnasCantidad { get; set; }
+    public decimal? HorasDiurnasCantidad { get; set; }
 
-    [NotMapped]
+   
 
-    public int? HorasNocturnasCantidad { get; set; }
+    public decimal? HorasNocturnasCantidad { get; set; }
 
     public decimal? HorasNocturnas {  get; set; }
 
@@ -45,6 +45,23 @@ public partial class Planilla
     public decimal? Aguinaldo { get; set; } 
 
     public DateTime? FechaGeneracion { get; set; }
+
+  
+    public decimal? Feriado { get; set; }
+
+   
+    public decimal? FeriadoCantidad { get; set; }
+
+    
+    public decimal? Reintegro { get; set; }
+
+    
+    public decimal? Incapacidad { get; set; }
+
+    
+    public decimal? Permisos { get; set; }
+
+  
 
     public virtual Trabajadore? Trabajador { get; set; }
 }

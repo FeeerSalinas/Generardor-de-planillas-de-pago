@@ -36,6 +36,7 @@ namespace ProyectoANF.Controllers
                 Trabajadore empleado = new Trabajadore
                 {
                     Nombre = modelo.Nombre,
+                    Correo = modelo.Correo,
                     Dui = modelo.Dui,
                     Nit = modelo.Nit,
                     Afp = modelo.Nit,

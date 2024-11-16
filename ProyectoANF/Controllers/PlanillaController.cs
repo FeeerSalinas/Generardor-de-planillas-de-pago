@@ -6,6 +6,7 @@ using ProyectoANF.Models;
 using ProyectoANF.Models.ViewModels;
 using System.Numerics;
 using Rotativa.AspNetCore;
+using ProyectoANF.Services;
 
 
 
@@ -15,12 +16,13 @@ namespace ProyectoANF.Controllers
     {
         private readonly PlanillaPagoDbContext _context;
         private readonly ILogger<PlanillaController> _logger;
+        private readonly IEmailService _emailService;
 
-
-        public PlanillaController(PlanillaPagoDbContext context, ILogger<PlanillaController> logger)
+        public PlanillaController(PlanillaPagoDbContext context, ILogger<PlanillaController> logger, IEmailService emailService)
         {
             _context = context;
             _logger = logger;
+            _emailService = emailService;
         }
 
         public async Task<IActionResult> ListaPlanillas(int? pageNumber)
@@ -56,11 +58,13 @@ namespace ProyectoANF.Controllers
                     }
                     decimal salarioDiario = trabajador.SalarioBase / 30;
                     decimal salarioHora = salarioDiario / 8;
-
+                    //para las variables no mapeadas
                     modelo.HorasDiurnas = modelo.HorasDiurnasCantidad *(salarioHora*2);
-                    modelo.HorasNocturnas = modelo.HorasNocturnasCantidad *(salarioHora*2 + salarioHora*0.025m);
-                    
-                    modelo.SalarioBruto = (salarioDiario * modelo.DiasTrabajados) + modelo.HorasDiurnas + modelo.HorasNocturnas;
+                    modelo.HorasNocturnas = modelo.HorasNocturnasCantidad *(salarioHora*2.5m);
+                    modelo.Feriado = modelo.FeriadoCantidad * (salarioHora * 2);
+
+                    modelo.SalarioBruto = (salarioDiario * modelo.DiasTrabajados) + modelo.HorasDiurnas + modelo.HorasNocturnas + modelo.Feriado
+                        ;
 
                     if (modelo.SalarioBruto > 1000)
                     {
@@ -150,13 +154,10 @@ namespace ProyectoANF.Controllers
 
                     // Calcular horas diurnas y nocturnas basadas en las cantidades actualizadas
                     planillaExistente.HorasDiurnas = modelo.HorasDiurnasCantidad * (salarioHora * 2);
-                    planillaExistente.HorasNocturnas = modelo.HorasNocturnasCantidad * (salarioHora * 2 + salarioHora * 0.025m);
+                    planillaExistente.HorasNocturnas = modelo.HorasNocturnasCantidad * (salarioHora * 2.5m);
+                    modelo.Feriado = modelo.FeriadoCantidad * (salarioHora * 2);
 
-                    // Calcular salario bruto con los nuevos datos
-                    planillaExistente.SalarioBruto =
-                        (salarioDiario * modelo.DiasTrabajados) +
-                        planillaExistente.HorasDiurnas +
-                        planillaExistente.HorasNocturnas;
+                    modelo.SalarioBruto = (salarioDiario * modelo.DiasTrabajados) + modelo.HorasDiurnas + modelo.HorasNocturnas + modelo.Feriado;
 
                     // Recalcular ISSS, AFP, y Renta
                     planillaExistente.Isss = planillaExistente.SalarioBruto > 1000 ? 30 : planillaExistente.SalarioBruto * 0.03m;
@@ -228,6 +229,65 @@ namespace ProyectoANF.Controllers
                 PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait,
                 CustomSwitches = "--enable-local-file-access"
             };
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EnviarPlanillaPorCorreo(int id)
+        {
+            var planilla = await _context.Planillas
+                .Include(p => p.Trabajador)
+                .FirstOrDefaultAsync(p => p.PlanillaId == id);
+
+            if (planilla == null || planilla.Trabajador == null)
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrEmpty(planilla.Trabajador.Correo) || planilla.Trabajador.Correo == "No proporcionado")
+            {
+                TempData["Error"] = "El trabajador no tiene un correo electrónico registrado.";
+                return RedirectToAction(nameof(ListaPlanillas));
+            }
+
+            try
+            {
+                // Generar el PDF
+                var pdfResult = new ViewAsPdf("GenerarPDF", planilla)
+                {
+                    FileName = $"Planilla-{planilla.PlanillaId}-{planilla.Trabajador.Nombre}-{planilla.Mes}-{planilla.Año}.pdf",
+                    PageSize = Rotativa.AspNetCore.Options.Size.A4,
+                    PageMargins = new Rotativa.AspNetCore.Options.Margins(20, 20, 20, 20),
+                    PageOrientation = Rotativa.AspNetCore.Options.Orientation.Portrait,
+                    CustomSwitches = "--enable-local-file-access"
+                };
+
+                // Convertir el PDF a bytes
+                var binary = await pdfResult.BuildFile(ControllerContext);
+
+                // Preparar el correo
+                var subject = $"Planilla de Pago - {planilla.Mes}/{planilla.Año}";
+                var body = $@"
+                <h2>Planilla de Pago</h2>
+                <p>Estimado/a {planilla.Trabajador.Nombre},</p>
+                <p>Adjunto encontrará su planilla de pago correspondiente al período {planilla.Mes}/{planilla.Año}.</p>
+                <p>Saludos cordiales.</p>";
+
+                // Enviar el correo
+                await _emailService.SendEmailWithAttachmentAsync(
+                    planilla.Trabajador.Correo,
+                    subject,
+                    body,
+                    binary,
+                    pdfResult.FileName);
+
+                TempData["Success"] = "La planilla ha sido enviada exitosamente por correo.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Error al enviar la planilla por correo: " + ex.Message;
+            }
+
+            return RedirectToAction(nameof(ListaPlanillas));
         }
     }
 }

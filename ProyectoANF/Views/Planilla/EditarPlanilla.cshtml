@@ -3,6 +3,7 @@
     Layout = null;
 }
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -187,7 +188,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label asp-for="HorasDiurnas" class="form-label">Horas extra diurnas</label>
+                            <label asp-for="HorasDiurnasCantidad" class="form-label">Horas extra diurnas</label>
                             <div class="input-icon">
                                 <i class="fas fa-sun"></i>
                                 <input class="form-control" type="number" required min="0" asp-for="HorasDiurnasCantidad" />
@@ -196,7 +197,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label asp-for="HorasNocturnas" class="form-label">Horas extra nocturnas</label>
+                            <label asp-for="HorasNocturnasCantidad" class="form-label">Horas extra nocturnas</label>
                             <div class="input-icon">
                                 <i class="fas fa-moon"></i>
                                 <input class="form-control" type="number" required min="0" asp-for="HorasNocturnasCantidad" />
@@ -206,10 +207,58 @@
                 </div>
 
                 <div class="section-title">
-                    <i class="fas fa-money-bill-wave me-2"></i>Beneficios Adicionales
+                    <i class="fas fa-money-bill-wave me-2"></i>Compensaciones y Deducciones
                 </div>
 
-                <!-- Fila 3: Vacaciones, Indemnización y Aguinaldo -->
+                <!-- Fila 3: Feriado y Reintegro -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="FeriadoCantidad" class="form-label">Feriado ($)</label>
+                            <div class="input-icon">
+                                <i class="fas fa-calendar-star"></i>
+                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="FeriadoCantidad" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Reintegro" class="form-label">Reintegro ($)</label>
+                            <div class="input-icon">
+                                <i class="fas fa-undo"></i>
+                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Reintegro" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fila 4: Incapacidad y Permisos -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Incapacidad" class="form-label">Incapacidad ($)</label>
+                            <div class="input-icon">
+                                <i class="fas fa-user-injured"></i>
+                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Incapacidad" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Permisos" class="form-label">Permisos ($)</label>
+                            <div class="input-icon">
+                                <i class="fas fa-door-open"></i>
+                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Permisos" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                    <i class="fas fa-gift me-2"></i>Beneficios Adicionales
+                </div>
+
+                <!-- Fila 5: Vacaciones, Indemnización y Aguinaldo -->
                 <div class="row mb-4">
                     <div class="col-md-4">
                         <div class="form-group">
@@ -245,7 +294,7 @@
                     <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
                         <i class="fas fa-times me-2"></i>Cancelar
                     </a>
-                    <button class="btn btn-success">
+                    <button type="submit" class="btn btn-success">
                         <i class="fas fa-save me-2"></i>Guardar Cambios
                     </button>
                 </div>
