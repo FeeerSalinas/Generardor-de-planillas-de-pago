@@ -1,0 +1,1 @@
+Proyecto desarollado con .Net 8 donde pueden generarse planillas de pago(De El Salvador) para los empleados de une empresa, con calculos basados en la ley, ademas de permitir descargar planillas por pdf y enviar por correo electronico
