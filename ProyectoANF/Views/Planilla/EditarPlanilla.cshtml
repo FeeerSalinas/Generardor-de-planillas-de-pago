@@ -3,64 +3,147 @@
     Layout = null;
 }
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Planilla</title>
+    <title>Editar Planilla - Sivar Delivery</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #682A7A;
+            --secondary-color: #9B4F96;
+            --accent-color: #F2C811;
+            --light-bg: #f6f5f7;
+            --dark-text: #333;
+            --light-text: #f8f9fa;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --input-border: #e2e8f0;
+        }
+
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #F6F5F7 0%, #E8E0EC 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
         }
 
-        .card {
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            border: none;
-            border-radius: 15px;
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('/Imagenes/mandaditos.jpg');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                filter: blur(3px) brightness(0.8);
+                opacity: 0.3;
+                z-index: -1;
+            }
+
+        .page-container {
             width: 100%;
             max-width: 900px;
-            background: rgba(255, 255, 255, 0.95);
+            position: relative;
+            z-index: 1;
         }
 
-        .card-header {
-            background: linear-gradient(45deg, #4a90e2, #63b3ed);
+        .header-bar {
+            background-color: var(--primary-color);
             color: white;
+            border-radius: 15px 15px 0 0;
             padding: 1.5rem;
-            border-radius: 15px 15px 0 0 !important;
-            font-size: 1.5rem;
-            font-weight: 600;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .card-body {
+        .header-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon {
+            font-size: 1.8rem;
+            margin-right: 1rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .logo {
+            max-height: 40px;
+        }
+
+        .form-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 0 0 15px 15px;
+            box-shadow: var(--shadow);
             padding: 2rem;
         }
 
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(104, 42, 122, 0.1);
+        }
+
+            .form-section:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .section-title i {
+                margin-right: 0.75rem;
+                opacity: 0.8;
+            }
+
         .form-label {
             font-weight: 500;
-            color: #2d3748;
+            color: var(--dark-text);
             margin-bottom: 0.5rem;
+            font-size: 0.95rem;
         }
 
         .form-control, .form-select {
-            border: 1.5px solid #e2e8f0;
-            padding: 0.75rem;
+            border: 1.5px solid var(--input-border);
+            padding: 0.75rem 1rem;
             border-radius: 8px;
             transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.8);
         }
 
             .form-control:focus, .form-select:focus {
-                border-color: #4a90e2;
-                box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+                border-color: var(--secondary-color);
+                box-shadow: 0 0 0 3px rgba(155, 79, 150, 0.1);
+                background-color: white;
             }
 
         .input-icon {
@@ -72,251 +155,332 @@
                 left: 1rem;
                 top: 50%;
                 transform: translateY(-50%);
-                color: #718096;
+                color: var(--secondary-color);
+                opacity: 0.7;
             }
 
             .input-icon input, .input-icon select {
                 padding-left: 2.5rem;
             }
 
-        .btn {
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: transform 0.2s ease;
+        .form-group {
+            margin-bottom: 1.5rem;
         }
 
-            .btn:hover {
+            .form-group:last-child {
+                margin-bottom: 0;
+            }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(155, 79, 150, 0.2);
+        }
+
+            .btn-primary:hover, .btn-primary:focus {
+                background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
                 transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(155, 79, 150, 0.3);
             }
 
         .btn-secondary {
-            background: linear-gradient(45deg, #718096, #a0aec0);
+            background-color: #718096;
+            color: white;
             border: none;
+            padding: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(113, 128, 150, 0.2);
         }
 
-        .btn-success {
-            background: linear-gradient(45deg, #48bb78, #68d391);
-            border: none;
-        }
-
-        .btn-secondary:hover {
-            box-shadow: 0 4px 12px rgba(113, 128, 150, 0.2);
-        }
-
-        .btn-success:hover {
-            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.2);
-        }
+            .btn-secondary:hover, .btn-secondary:focus {
+                background-color: #4a5568;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(113, 128, 150, 0.3);
+            }
 
         .alert {
             border-radius: 8px;
             border: none;
-            margin-top: 1.5rem;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
         }
 
-        .section-title {
-            color: #2d3748;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin: 1.5rem 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e2e8f0;
+        .alert-success {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .home-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1.5rem;
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            background-color: rgba(155, 79, 150, 0.1);
+        }
+
+            .home-link:hover {
+                color: white;
+                background-color: var(--primary-color);
+                transform: translateX(-5px);
+            }
+
+            .home-link i {
+                margin-right: 0.5rem;
+                transition: transform 0.2s ease;
+            }
+
+            .home-link:hover i {
+                transform: translateX(-3px);
+            }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+            input[type="number"]::-webkit-outer-spin-button,
+            input[type="number"]::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+        @@media (max-width: 767.98px) {
+            .page-container {
+                max-width: 100%;
+            }
+
+            .header-bar {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .header-title {
+                justify-content: center;
+            }
+
+            .form-card {
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-file-invoice-dollar me-2"></i>Editar Planilla
+    <div class="page-container">
+        <div class="header-bar">
+            <div class="header-title">
+                <i class="fas fa-file-invoice-dollar header-icon"></i>
+                Editar Planilla
+            </div>
+            <img src="/Imagenes/sivarDelivery.jpg" alt="Sivar Delivery" class="logo">
         </div>
-        <div class="card-body">
+
+        <div class="form-card">
             <form asp-controller="Planilla" asp-action="EditarPlanilla" method="post">
                 <input type="hidden" asp-for="PlanillaId" />
 
-                <div class="section-title">
-                    <i class="fas fa-info-circle me-2"></i>Información General
-                </div>
-
-                <!-- Fila 1: Trabajador, Mes y Año -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="TrabajadorId" class="form-label">Trabajador</label>
-                            <div class="input-icon">
-                                <i class="fas fa-user"></i>
-                                <select asp-for="TrabajadorId" class="form-select"
-                                        asp-items="@(new SelectList((IEnumerable<ProyectoANF.Models.Trabajadore>)ViewData["Trabajadores"], "TrabajadorId", "Nombre", Model.TrabajadorId))">
-                                    <option value="">Seleccione un trabajador</option>
-                                </select>
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Información General
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="TrabajadorId" class="form-label">Trabajador</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-user"></i>
+                                    <select asp-for="TrabajadorId" class="form-select"
+                                            asp-items="@(new SelectList((IEnumerable<ProyectoANF.Models.Trabajadore>)ViewData["Trabajadores"], "TrabajadorId", "Nombre", Model.TrabajadorId))">
+                                        <option value="">Seleccione un trabajador</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="Mes" class="form-label">Mes</label>
-                            <div class="input-icon">
-                                <i class="fas fa-calendar"></i>
-                                <input class="form-control" type="number" required min="1" max="12" asp-for="Mes" />
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Mes" class="form-label">Mes</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-calendar"></i>
+                                    <input class="form-control" type="number" required min="1" max="12" asp-for="Mes" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="Año" class="form-label">Año</label>
-                            <div class="input-icon">
-                                <i class="fas fa-calendar-alt"></i>
-                                <input class="form-control" type="number" required min="2000" max="2100" asp-for="Año" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-title">
-                    <i class="fas fa-clock me-2"></i>Tiempo Laborado
-                </div>
-
-                <!-- Fila 2: Días trabajados y Horas extra -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="DiasTrabajados" class="form-label">Días trabajados</label>
-                            <div class="input-icon">
-                                <i class="fas fa-calendar-check"></i>
-                                <input class="form-control" type="number" required min="1" max="30" asp-for="DiasTrabajados" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="HorasDiurnasCantidad" class="form-label">Horas extra diurnas</label>
-                            <div class="input-icon">
-                                <i class="fas fa-sun"></i>
-                                <input class="form-control" type="number" required min="0" asp-for="HorasDiurnasCantidad" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="HorasNocturnasCantidad" class="form-label">Horas extra nocturnas</label>
-                            <div class="input-icon">
-                                <i class="fas fa-moon"></i>
-                                <input class="form-control" type="number" required min="0" asp-for="HorasNocturnasCantidad" />
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Año" class="form-label">Año</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <input class="form-control" type="number" required min="2000" max="2100" asp-for="Año" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="section-title">
-                    <i class="fas fa-money-bill-wave me-2"></i>Compensaciones y Deducciones
-                </div>
-
-                <!-- Fila 3: Feriado y Reintegro -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="FeriadoCantidad" class="form-label">Feriado ($)</label>
-                            <div class="input-icon">
-                                <i class="fas fa-calendar-star"></i>
-                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="FeriadoCantidad" />
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-clock"></i>
+                        Tiempo Laborado
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="DiasTrabajados" class="form-label">Días trabajados</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-calendar-check"></i>
+                                    <input class="form-control" type="number" required min="1" max="30" asp-for="DiasTrabajados" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="Reintegro" class="form-label">Reintegro ($)</label>
-                            <div class="input-icon">
-                                <i class="fas fa-undo"></i>
-                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Reintegro" />
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="HorasDiurnasCantidad" class="form-label">Horas extra diurnas</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-sun"></i>
+                                    <input class="form-control" type="number" required min="0" asp-for="HorasDiurnasCantidad" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Fila 4: Incapacidad y Permisos -->
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="Incapacidad" class="form-label">Incapacidad ($)</label>
-                            <div class="input-icon">
-                                <i class="fas fa-user-injured"></i>
-                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Incapacidad" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="Permisos" class="form-label">Permisos ($)</label>
-                            <div class="input-icon">
-                                <i class="fas fa-door-open"></i>
-                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Permisos" />
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="HorasNocturnasCantidad" class="form-label">Horas extra nocturnas</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-moon"></i>
+                                    <input class="form-control" type="number" required min="0" asp-for="HorasNocturnasCantidad" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="section-title">
-                    <i class="fas fa-gift me-2"></i>Beneficios Adicionales
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-money-bill-wave"></i>
+                        Compensaciones y Deducciones
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FeriadoCantidad" class="form-label">Feriados ($)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-calendar-star"></i>
+                                    <input class="form-control" type="number" required min="0" step="0.01" asp-for="FeriadoCantidad" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Reintegro" class="form-label">Reintegro ($)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-undo"></i>
+                                    <input class="form-control" type="number" required min="0" step="0.01" asp-for="Reintegro" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Incapacidad" class="form-label">Incapacidad ($)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-user-injured"></i>
+                                    <input class="form-control" type="number" required min="0" step="0.01" asp-for="Incapacidad" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Permisos" class="form-label">Permisos ($)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-door-open"></i>
+                                    <input class="form-control" type="number" required min="0" step="0.01" asp-for="Permisos" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Fila 5: Vacaciones, Indemnización y Aguinaldo -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="Vacaciones" class="form-label">Vacaciones ($)</label>
-                            <div class="input-icon">
-                                <i class="fas fa-umbrella-beach"></i>
-                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Vacaciones" />
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-gift"></i>
+                        Beneficios Adicionales
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Vacaciones" class="form-label">Vacaciones ($)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-umbrella-beach"></i>
+                                    <input class="form-control" type="number" required min="0" step="0.01" asp-for="Vacaciones" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="Indemnizacion" class="form-label">Indemnización ($)</label>
-                            <div class="input-icon">
-                                <i class="fas fa-hand-holding-usd"></i>
-                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Indemnizacion" />
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Indemnizacion" class="form-label">Indemnización ($)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                    <input class="form-control" type="number" required min="0" step="0.01" asp-for="Indemnizacion" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label asp-for="Aguinaldo" class="form-label">Aguinaldo ($)</label>
-                            <div class="input-icon">
-                                <i class="fas fa-gift"></i>
-                                <input class="form-control" type="number" required min="0" step="0.01" asp-for="Aguinaldo" />
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Aguinaldo" class="form-label">Aguinaldo ($)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-gift"></i>
+                                    <input class="form-control" type="number" required min="0" step="0.01" asp-for="Aguinaldo" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Botones -->
-                <div class="d-flex justify-content-between mt-4">
-                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">
-                        <i class="fas fa-times me-2"></i>Cancelar
-                    </a>
-                    <button type="submit" class="btn btn-success">
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-2"></i>Guardar Cambios
                     </button>
                 </div>
 
                 @if (ViewData["Error"] != null)
                 {
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger mt-4" role="alert">
                         <i class="fas fa-exclamation-circle me-2"></i>@ViewData["Error"]
                     </div>
                 }
                 else if (ViewData["Completado"] != null)
                 {
-                    <div class="alert alert-success" role="alert">
+                    <div class="alert alert-success mt-4" role="alert">
                         <i class="fas fa-check-circle me-2"></i>@ViewData["Completado"]
                     </div>
                 }
             </form>
+
+            <div class="text-center mt-3">
+                <a href="@Url.Action("Index", "Home")" class="home-link">
+                    <i class="fas fa-arrow-left"></i>Volver al Dashboard
+                </a>
+            </div>
         </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </body>
 </html>

@@ -8,94 +8,239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar un empleado</title>
+    <title>Registro de Empleado - Sivar Delivery</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #682A7A;
+            --secondary-color: #9B4F96;
+            --accent-color: #F2C811;
+            --light-bg: #f6f5f7;
+            --dark-text: #333;
+            --light-text: #f8f9fa;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --input-border: #e2e8f0;
+        }
+
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #F6F5F7 0%, #E8E0EC 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
         }
 
-        .card {
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            border: none;
-            border-radius: 15px;
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('/Imagenes/mandaditos.jpg');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                filter: blur(3px) brightness(0.8);
+                opacity: 0.3;
+                z-index: -1;
+            }
+
+        .page-container {
             width: 100%;
-            max-width: 600px;
-            background: rgba(255, 255, 255, 0.95);
+            max-width: 850px;
+            position: relative;
+            z-index: 1;
         }
 
-        .card-header {
-            background: linear-gradient(45deg, #4a90e2, #63b3ed);
+        .header-bar {
+            background-color: var(--primary-color);
             color: white;
+            border-radius: 15px 15px 0 0;
             padding: 1.5rem;
-            border-radius: 15px 15px 0 0 !important;
-            font-size: 1.5rem;
-            font-weight: 600;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .card-body {
+        .header-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon {
+            font-size: 1.8rem;
+            margin-right: 1rem;
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .logo {
+            max-height: 40px;
+        }
+
+        .form-card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 0 0 15px 15px;
+            box-shadow: var(--shadow);
             padding: 2rem;
         }
 
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(104, 42, 122, 0.1);
+        }
+
+            .form-section:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+
+        .section-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .section-title i {
+                margin-right: 0.75rem;
+                opacity: 0.8;
+            }
+
         .form-label {
             font-weight: 500;
-            color: #2d3748;
+            color: var(--dark-text);
             margin-bottom: 0.5rem;
+            font-size: 0.95rem;
         }
 
         .form-control {
-            border: 1.5px solid #e2e8f0;
-            padding: 0.75rem;
+            border: 1.5px solid var(--input-border);
+            padding: 0.75rem 1rem;
             border-radius: 8px;
             transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.8);
         }
 
             .form-control:focus {
-                border-color: #4a90e2;
-                box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+                border-color: var(--secondary-color);
+                box-shadow: 0 0 0 3px rgba(155, 79, 150, 0.1);
+                background-color: white;
             }
 
-        .btn-primary {
-            background: linear-gradient(45deg, #4a90e2, #63b3ed);
-            border: none;
-            padding: 0.75rem;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: transform 0.2s ease;
+        .input-icon {
+            position: relative;
         }
 
-            .btn-primary:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+            .input-icon i {
+                position: absolute;
+                left: 1rem;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--secondary-color);
+                opacity: 0.7;
+            }
+
+            .input-icon input {
+                padding-left: 2.5rem;
             }
 
         .form-group {
             margin-bottom: 1.5rem;
         }
 
+            .form-group:last-child {
+                margin-bottom: 0;
+            }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(155, 79, 150, 0.2);
+        }
+
+            .btn-primary:hover, .btn-primary:focus {
+                background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+                transform: translateY(-2px);
+                box-shadow: 0 6px 12px rgba(155, 79, 150, 0.3);
+            }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+            color: var(--dark-text);
+            border: none;
+            font-weight: 600;
+        }
+
+            .btn-accent:hover {
+                background-color: #e0b80f;
+                color: var(--dark-text);
+            }
+
         .alert {
             border-radius: 8px;
             border: none;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
         }
 
         .home-link {
-            display: inline-block;
-            color: #4a90e2;
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: 500;
-            margin-top: 1rem;
-            transition: color 0.2s ease;
+            margin-top: 1.5rem;
+            transition: all 0.2s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            background-color: rgba(155, 79, 150, 0.1);
         }
 
             .home-link:hover {
-                color: #2d3748;
+                color: white;
+                background-color: var(--primary-color);
+                transform: translateX(-5px);
+            }
+
+            .home-link i {
+                margin-right: 0.5rem;
+                transition: transform 0.2s ease;
+            }
+
+            .home-link:hover i {
+                transform: translateX(-3px);
             }
 
         input[type="number"] {
@@ -108,144 +253,200 @@
                 margin: 0;
             }
 
-        .input-icon {
+        .form-floating {
             position: relative;
         }
 
-            .input-icon i {
-                position: absolute;
-                left: 1rem;
-                top: 50%;
-                transform: translateY(-50%);
-                color: #718096;
+            .form-floating > .form-control {
+                padding-top: 1.625rem;
+                padding-bottom: 0.625rem;
+                height: calc(3.5rem + 2px);
             }
 
-            .input-icon input {
-                padding-left: 2.5rem;
+            .form-floating > label {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                padding: 1rem 0.75rem;
+                overflow: hidden;
+                text-align: start;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                pointer-events: none;
+                border: 1px solid transparent;
+                transform-origin: 0 0;
+                transition: opacity .1s ease-in-out,transform .1s ease-in-out;
             }
+
+        @@media (max-width: 767.98px) {
+            .page-container {
+                max-width: 100%;
+            }
+
+            .header-bar {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .header-title {
+                justify-content: center;
+            }
+
+            .form-card {
+                padding: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-user-plus me-2"></i>Registro de Empleado
+    <div class="page-container">
+        <div class="header-bar">
+            <div class="header-title">
+                <i class="fas fa-user-plus header-icon"></i>
+                Registro de Empleado
+            </div>
+            <img src="/Imagenes/sivarDelivery.jpg" alt="Sivar Delivery" class="logo">
         </div>
-        <div class="card-body">
+
+        <div class="form-card">
             <form asp-controller="Trabajadores" asp-action="AgregarTrabajador" method="post">
-                <div class="form-group">
-                    <label class="form-label" for="Nombre">Nombre completo</label>
-                    <div class="input-icon">
-                        <i class="fas fa-user"></i>
-                        <input class="form-control" type="text" placeholder="Ej: Juan Pérez" required asp-for="Nombre" />
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="Correo">Correo</label>
-                    <div class="input-icon">
-                        <i class="fas fa-email"></i>
-                        <input class="form-control" type="email" placeholder="Ej: JuanPerez@gmail.com" required asp-for="Correo" />
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label" for="Dui">DUI</label>
-                            <div class="input-icon">
-                                <i class="fas fa-id-card"></i>
-                                <input class="form-control" type="text" placeholder="123456789" required maxlength="10" asp-for="Dui" />
-                            </div>
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-address-card"></i>
+                        Información Personal
+                    </h3>
+                    <div class="form-group">
+                        <label class="form-label" for="Nombre">Nombre completo</label>
+                        <div class="input-icon">
+                            <i class="fas fa-user"></i>
+                            <input class="form-control" type="text" placeholder="Ej: Juan Pérez" required asp-for="Nombre" />
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label" for="Nit">NIT</label>
-                            <div class="input-icon">
-                                <i class="fas fa-file-alt"></i>
-                                <input class="form-control" type="text" placeholder="1234-567890-123-4" required maxlength="17" asp-for="Nit" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label" for="Afp">Número AFP</label>
-                            <div class="input-icon">
-                                <i class="fas fa-shield-alt"></i>
-                                <input class="form-control" type="text" placeholder="12345678901234" required maxlength="20" asp-for="Afp" />
-                            </div>
+                    <div class="form-group">
+                        <label class="form-label" for="Correo">Correo Electrónico</label>
+                        <div class="input-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input class="form-control" type="email" placeholder="Ej: juan.perez@example.com" required asp-for="Correo" />
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label" for="Isss">Número ISSS</label>
-                            <div class="input-icon">
-                                <i class="fas fa-hospital"></i>
-                                <input class="form-control" type="text" placeholder="123456789" required maxlength="15" asp-for="Isss" />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="Dui">Documento Único de Identidad (DUI)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-id-card"></i>
+                                    <input class="form-control" type="text" placeholder="00000000-0" required maxlength="10" asp-for="Dui" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="Nit">Número de Identificación Tributaria (NIT)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                    <input class="form-control" type="text" placeholder="0000-000000-000-0" required maxlength="17" asp-for="Nit" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label" for="Cargo">Cargo</label>
-                            <div class="input-icon">
-                                <i class="fas fa-briefcase"></i>
-                                <input class="form-control" type="text" placeholder="Ej: Gerente" required asp-for="Cargo" />
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-shield-alt"></i>
+                        Información de Seguridad Social
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="Afp">Número AFP</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <input class="form-control" type="text" placeholder="00000000000000" required maxlength="20" asp-for="Afp" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label class="form-label" for="SalarioBase">Salario Base</label>
-                            <div class="input-icon">
-                                <i class="fas fa-dollar-sign"></i>
-                                <input class="form-control" type="number" placeholder="0.00" required step="0.01" asp-for="SalarioBase" />
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="Isss">Número ISSS</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-hospital"></i>
+                                    <input class="form-control" type="text" placeholder="000000000" required maxlength="15" asp-for="Isss" />
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="FechaContratacion">Fecha de Contratación</label>
-                    <div class="input-icon">
-                        <i class="fas fa-calendar"></i>
-                        <input class="form-control" type="date" required asp-for="FechaContratacion" />
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-briefcase"></i>
+                        Información Laboral
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="Cargo">Cargo</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                    <input class="form-control" type="text" placeholder="Ej: Gerente de Operaciones" required asp-for="Cargo" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label" for="SalarioBase">Salario Base ($)</label>
+                                <div class="input-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    <input class="form-control" type="number" placeholder="0.00" required step="0.01" min="0" asp-for="SalarioBase" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="FechaContratacion">Fecha de Contratación</label>
+                        <div class="input-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                            <input class="form-control" type="date" required asp-for="FechaContratacion" />
+                        </div>
                     </div>
                 </div>
 
-                <div class="d-grid gap-2">
-                    <button class="btn btn-primary">
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save me-2"></i>Registrar Empleado
                     </button>
                 </div>
 
                 @if (ViewData["Mensaje"] != null)
                 {
-                    <div class="alert alert-danger mt-3" role="alert">
+                    <div class="alert alert-danger mt-4" role="alert">
                         <i class="fas fa-exclamation-circle me-2"></i>@ViewData["Mensaje"]
                     </div>
                 }
                 else if (ViewData["Completado"] != null)
                 {
-                    <div class="alert alert-success mt-3" role="alert">
+                    <div class="alert alert-success mt-4" role="alert">
                         <i class="fas fa-check-circle me-2"></i>@ViewData["Completado"]
                     </div>
                 }
             </form>
-            <a href="@Url.Action("Index", "Home")" class="home-link">
-                <i class="fas fa-arrow-left me-2"></i>Volver a inicio
-            </a>
+
+            <div class="text-center mt-3">
+                <a href="@Url.Action("Index", "Home")" class="home-link">
+                    <i class="fas fa-arrow-left"></i>Volver al Dashboard
+                </a>
+            </div>
         </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </body>
 </html>

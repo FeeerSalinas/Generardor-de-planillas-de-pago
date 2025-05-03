@@ -17,11 +17,11 @@
                         <a href="@Url.Action("Index", "Home")" class="home-link">
                             <i class="fas fa-arrow-left me-2"></i>Volver a inicio
                         </a>
-                        <h2 class="card-title text-primary fw-bold m-0">
+                        <h2 class="card-title text-custom-primary fw-bold m-0">
                             <i class="fas fa-users me-2"></i>Nuestros Empleados
                         </h2>
                         <a asp-controller="Trabajadores" asp-action="AgregarTrabajador"
-                           class="btn btn-primary shadow-sm">
+                           class="btn btn-custom-primary shadow-sm">
                             <i class="fas fa-user-plus me-2"></i>Nuevo Empleado
                         </a>
                     </div>
@@ -31,7 +31,7 @@
                         <div class="col-md-4">
                             <div class="input-group shadow-sm">
                                 <span class="input-group-text bg-white border-end-0">
-                                    <i class="fas fa-search text-primary"></i>
+                                    <i class="fas fa-search text-custom-primary"></i>
                                 </span>
                                 <select class="form-select border-start-0" id="filtroEmpleado">
                                     <option value="">Todos los empleados</option>
@@ -48,7 +48,7 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle" id="tablaEmpleados">
                             <thead>
-                                <tr class="bg-primary text-white">
+                                <tr class="bg-custom-primary text-white">
                                     <th>Nombre Completo</th>
                                     <th>Correo</th>
                                     <th>DUI</th>
@@ -67,7 +67,7 @@
                                 {
                                     <tr class="border-bottom employee-row" data-empleado-id="@item.TrabajadorId">
                                         <td class="fw-semibold">
-                                            <i class="fas fa-user-circle text-primary me-2"></i>@item.Nombre
+                                            <i class="fas fa-user-circle text-custom-primary me-2"></i>@item.Nombre
                                         </td>
                                         <td>@item.Correo</td>
                                         <td>@item.Dui</td>
@@ -75,7 +75,7 @@
                                         <td>@item.Afp</td>
                                         <td>@item.Isss</td>
                                         <td>
-                                            <span class="badge bg-info text-dark">
+                                            <span class="badge bg-custom-secondary text-white">
                                                 <i class="fas fa-briefcase me-1"></i>@item.Cargo
                                             </span>
                                         </td>
@@ -185,6 +185,49 @@
 </div>
 
 <style>
+    :root {
+        --primary-color: #682A7A;
+        --secondary-color: #9B4F96;
+    }
+
+    .text-custom-primary {
+        color: var(--primary-color) !important;
+    }
+
+    .bg-custom-primary {
+        background-color: var(--primary-color) !important;
+    }
+
+    .bg-custom-secondary {
+        background-color: var(--secondary-color) !important;
+    }
+
+    .btn-custom-primary {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: white !important;
+    }
+
+        .btn-custom-primary:hover {
+            background-color: var(--secondary-color) !important;
+            border-color: var(--secondary-color) !important;
+        }
+
+    .btn-outline-custom-primary {
+        color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+    }
+
+        .btn-outline-custom-primary:hover {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+        }
+
+    .page-item.active .page-link {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+    }
+
     .container-fluid {
         background-color: #f8f9fa;
     }
@@ -248,7 +291,7 @@
         }
 
     .table-hover tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05);
+        background-color: rgba(104, 42, 122, 0.05);
         transition: background-color 0.2s ease-in-out;
     }
 
@@ -258,11 +301,6 @@
         padding: 0.5rem 1rem;
         border-radius: 6px;
         margin: 0 3px;
-    }
-
-    .page-item.active .page-link {
-        background-color: var(--bs-primary);
-        color: white;
     }
 
     .btn-outline-danger:hover, .btn-outline-warning:hover {

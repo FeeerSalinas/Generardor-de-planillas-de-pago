@@ -1,115 +1,249 @@
 ﻿@using System.Security.Claims;
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Mandaditos SV - Dashboard";
     Layout = null;
 }
 
-
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sivar Delivery - Dashboard</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #682A7A; 
+            --secondary-color: #9B4F96; 
+            --accent-color: #F2C811; 
+            --light-bg: #f9f9f9;
+            --dark-text: #333;
+            --light-text: #f8f9fa;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
         body {
-            background-color: #f8f9fa;
-            background-image: url('/Imagenes/mandaditos.jpg');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            position: relative;
             min-height: 100vh;
             margin: 0;
-          
+            padding-bottom: 60px;
         }
 
-        .container {
-            
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-        }
-
-        .card {
-            margin-top: 3rem;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-            height: 100%;
-            background: white;
-        }
-
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: url('/Imagenes/nueevoFondo.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                filter: blur(2px) brightness(0.9);
+                z-index: -1;
             }
 
-        .card-body {
-            padding: 2rem 1.5rem;
-        }
-
-        .card-icon {
-            font-size: 3rem;
-            color: #0d6efd;
-            margin-bottom: 1rem;
-        }
-
-        .card h5 {
-            color: #2c3e50;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .card p {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
         .navbar {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: var(--shadow);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo {
+            max-height: 100px;
+            transition: transform 0.3s;
+        }
+
+            .brand-logo:hover {
+                transform: scale(1.05);
+            }
+
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            font-size: 1.8rem;
         }
 
         .logout-btn {
-            background-color: #dc3545;
+            background-color: var(--accent-color);
             color: white;
             border: none;
             padding: 0.5rem 1.5rem;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
         }
 
             .logout-btn:hover {
-                background-color: #c82333;
+                background-color: #e74c3c;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
             }
 
-        h1{
-            display: flex;
-            justify-content:center;
-            align-items: center;
-            text-align: center;
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
         }
-        img{
-            width: 100px;
-            height: 300px;
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+            .section-title::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80px;
+                height: 3px;
+                background-color: var(--secondary-color);
+            }
+
+        .menu-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s ease;
+            height: 100%;
+            overflow: hidden;
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border-bottom: 4px solid transparent;
+        }
+
+            .menu-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+                border-bottom: 4px solid var(--secondary-color);
+            }
+
+        .card-body {
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(15, 90, 150, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .menu-card:hover .card-icon-wrapper {
+            background-color: var(--primary-color);
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .menu-card:hover .card-icon {
+            color: white;
+        }
+
+        .card-title {
+            color: var(--dark-text);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .card-text {
+            color: #6c757d;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-btn {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin-top: auto;
+        }
+
+        .menu-card:hover .card-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(104, 42, 122, 0.9); /* Morado C# con transparencia */
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        @@media (max-width: 767.98px) {
+            .dashboard-container {
+                padding: 1rem;
+                margin: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
+            .navbar {
+                padding: 0.5rem 0;
+            }
+
+            .card-body {
+                padding: 1.5rem 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light mb-4">
-        <div class="container d-flex justify-content-between align-items-center">
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="/Imagenes/logo.png" alt="Mandaditos SV" class="img-fluid" style="max-height: 50px;">
+                <img src="/Imagenes/sivarDelivery.jpg" alt="Mandaditos SV" class="brand-logo">
+                <h1 class="page-title">Sivar Delivery</h1>
             </a>
-
-           
-            <h1 class="mx-auto">Mandaditos SV</h1>
 
             <div class="ms-auto">
                 <a asp-controller="Home" asp-action="Salir" class="logout-btn">
@@ -119,56 +253,79 @@
         </div>
     </nav>
 
+    <div class="container dashboard-container">
+        <h2 class="section-title">Panel de Administración</h2>
 
-
-    <div class="container">
-        <div class="row row-cols-1 row-cols-md-2 g-4 text-center">
+        <div class="row row-cols-1 row-cols-md-2 g-4">
             <div class="col">
-                <a asp-controller="Trabajadores" asp-action="Index">
-                    <div class="card">
-                        <div class="card-body">
-                            <i class="fas fa-user card-icon"></i>
-                            <h5>Ver lista de empleados</h5>
-                            <p>Ingresa aquí para ver todos los empleados</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col">
-                <a asp-controller="Trabajadores" asp-action="AgregarTrabajador">
-                    <div class="card">
-                        <div class="card-body">
+                <div class="menu-card card h-100">
+                    <div class="card-body">
+                        <div class="card-icon-wrapper">
                             <i class="fas fa-user-plus card-icon"></i>
-                            <h5>Registrar nuevos empleados</h5>
-                            <p>Ingresa aquí para registrar nuevos empleados</p>
                         </div>
+                        <h5 class="card-title">Registrar Empleados</h5>
+                        <p class="card-text">Añade nuevos empleados al sistema con toda su información</p>
+                        <a asp-controller="Trabajadores" asp-action="AgregarTrabajador" class="card-btn">
+                            Añadir Empleado <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
                     </div>
-                </a>
+                </div>
             </div>
+
             <div class="col">
-                <a asp-controller="Planilla" asp-action="CrearPlanilla">
-                    <div class="card">
-                        <div class="card-body">
+                <div class="menu-card card h-100">
+                    <div class="card-body">
+                        <div class="card-icon-wrapper">
+                            <i class="fas fa-user card-icon"></i>
+                        </div>
+                        <h5 class="card-title">Lista de Empleados</h5>
+                        <p class="card-text">Visualiza y gestiona todos los empleados activos en el sistema</p>
+                        <a asp-controller="Trabajadores" asp-action="Index" class="card-btn">
+                            Ver Empleados <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div class="col">
+                <div class="menu-card card h-100">
+                    <div class="card-body">
+                        <div class="card-icon-wrapper">
                             <i class="fa-solid fa-dollar-sign card-icon"></i>
-                            <h5>Generar planilla a un empleado</h5>
-                            <p>Ingresa aquí para crear una planilla</p>
                         </div>
+                        <h5 class="card-title">Generar Planilla</h5>
+                        <p class="card-text">Crea y gestiona planillas de pago para cada empleado</p>
+                        <a asp-controller="Planilla" asp-action="CrearPlanilla" class="card-btn">
+                            Crear Planilla <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
                     </div>
-                </a>
+                </div>
             </div>
+
             <div class="col">
-                <a asp-controller="Planilla" asp-action="ListaPlanillas">
-                    <div class="card">
-                        <div class="card-body">
-                            <i class="fas fa-dollar-sign card-icon"></i>
-                            <h5>Ver lista de planillas</h5>
-                            <p>Ingresa aquí para ver la lista de planillas</p>
+                <div class="menu-card card h-100">
+                    <div class="card-body">
+                        <div class="card-icon-wrapper">
+                            <i class="fas fa-list-alt card-icon"></i>
                         </div>
+                        <h5 class="card-title">Lista de Planillas</h5>
+                        <p class="card-text">Consulta el historial completo de todas las planillas generadas</p>
+                        <a asp-controller="Planilla" asp-action="ListaPlanillas" class="card-btn">
+                            Ver Planillas <i class="fas fa-arrow-right ms-2"></i>
+                        </a>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
     </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0">&copy; @DateTime.Now.Year - Sivar Delivery | Sistema de Gestión de Planillas</p>
+        </div>
+    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
