@@ -98,6 +98,7 @@ namespace ProyectoANF.Controllers
                     modelo.FechaGeneracion = DateTime.Now;
 
                     await _context.Planillas.AddAsync(modelo);
+                    CompletarCalculosPlanilla(modelo, trabajador);
                     await _context.SaveChangesAsync();
 
                     ViewData["Completado"] = "Planilla registrada con exito";
@@ -193,10 +194,11 @@ namespace ProyectoANF.Controllers
                     planillaExistente.Indemnizacion = modelo.Indemnizacion;
                     planillaExistente.Aguinaldo = modelo.Aguinaldo;
 
+                    CompletarCalculosPlanilla(modelo, trabajador);
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Index", "Home");
                 }
-                catch (Exception ex)
+                catch (Exception ex)   
                 {
                     ViewData["Error"] = $"Ocurrió un error al actualizar la planilla: {ex.Message}";
                     return View(modelo);
@@ -289,5 +291,50 @@ namespace ProyectoANF.Controllers
 
             return RedirectToAction(nameof(ListaPlanillas));
         }
+
+        private void CompletarCalculosPlanilla(Planilla modelo, Trabajadore trabajador)
+        {
+            decimal salarioDiario = trabajador.SalarioBase / 30;
+            decimal salarioHora = salarioDiario / 8;
+
+            // Horas y feriado
+            modelo.HorasDiurnas ??= 0;
+            modelo.HorasNocturnas ??= 0;
+            modelo.Feriado ??= 0;
+
+            modelo.HorasDiurnas = modelo.HorasDiurnasCantidad * (salarioHora * 2);
+            modelo.HorasNocturnas = modelo.HorasNocturnasCantidad * (salarioHora * 2.5m);
+            modelo.Feriado = modelo.FeriadoCantidad * (salarioHora * 2);
+
+            // Bruto base + extras + reintegros
+            modelo.SalarioBruto =
+                (salarioDiario * modelo.DiasTrabajados) +
+                modelo.HorasDiurnas +
+                modelo.HorasNocturnas +
+                modelo.Feriado +
+                (modelo.Vacaciones ?? 0) +
+                (modelo.Aguinaldo ?? 0) +
+                (modelo.Indemnizacion ?? 0) +
+                (modelo.Reintegro ?? 0);
+
+            // ISSS y AFP
+            modelo.Isss = modelo.SalarioBruto > 1000 ? 30 : modelo.SalarioBruto * 0.03m;
+            modelo.Afp = modelo.SalarioBruto * 0.0725m;
+
+            // Renta
+            decimal? sobreElExceso = modelo.SalarioBruto - (modelo.Isss + modelo.Afp);
+            if (sobreElExceso >= 0.01m && sobreElExceso <= 472)
+                modelo.Renta = 0;
+            else if (sobreElExceso >= 472.01m && sobreElExceso <= 895.24m)
+                modelo.Renta = (sobreElExceso - 472) * 0.1m + 17.67m;
+            else if (sobreElExceso >= 895.25m && sobreElExceso <= 2038.10m)
+                modelo.Renta = (sobreElExceso - 895.24m) * 0.2m + 60;
+            else if (sobreElExceso >= 2038.11m)
+                modelo.Renta = (sobreElExceso - 2038.10m) * 0.3m + 288.57m;
+
+            // Salario Neto
+            modelo.SalarioNeto = modelo.SalarioBruto - modelo.Isss - modelo.Afp - modelo.Renta;
+        }
+
     }
 }
