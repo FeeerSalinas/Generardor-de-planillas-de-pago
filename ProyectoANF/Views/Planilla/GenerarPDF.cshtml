@@ -7,179 +7,429 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Constancia de Empleado - @Model.Trabajador?.Nombre</title>
+    <title>Planilla de Pago - @Model.Trabajador?.Nombre</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 20px;
             font-size: 12px;
-            max-width: 800px;
-            margin: 0 auto;
+            color: #333;
         }
 
         .header {
             text-align: center;
             margin-bottom: 20px;
-            border-bottom: 1px solid black;
-            padding-bottom: 10px;
+            border-bottom: 3px solid #682A7A;
+            padding-bottom: 15px;
+            position: relative;
+        }
+
+        .logo {
+            position: absolute;
+            top: 0;
+            right: 0;
+            max-height: 60px;
         }
 
         .company-name {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
+            color: #682A7A;
+            margin-bottom: 5px;
         }
 
         .document-title {
+            font-size: 16px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .document-subtitle {
             font-size: 14px;
+            color: #555;
             margin-top: 5px;
         }
 
-        .period-info {
+        .info-container {
             display: flex;
             justify-content: space-between;
-            margin: 10px 0;
-            font-size: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
         }
 
-        .section-title {
+        .info-block {
+            flex: 1;
+            padding: 0 10px;
+        }
+
+        .info-title {
             font-weight: bold;
-            margin: 15px 0 10px 0;
+            color: #682A7A;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 3px;
+        }
+
+        .info-row {
+            display: flex;
+            margin: 5px 0;
+        }
+
+        .info-label {
+            flex: 1;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .info-value {
+            flex: 1;
+            text-align: right;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin: 20px 0;
+        }
+
+        th {
+            background-color: #682A7A;
+            color: white;
+            padding: 8px;
+            text-align: left;
+            font-size: 11px;
         }
 
         td {
-            padding: 5px;
-            border: 1px solid black;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 11px;
         }
 
-        .label-column {
-            width: 200px;
-            background-color: white;
-            font-weight: normal;
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
         }
 
-        .value-column {
-            width: auto;
+        .section-title {
+            font-weight: bold;
+            margin: 20px 0 10px 0;
+            color: #682A7A;
+            border-bottom: 2px solid #682A7A;
+            padding-bottom: 5px;
+        }
+
+        .summary-table {
+            width: 50%;
+            margin-left: auto;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+            .summary-table td:first-child {
+                font-weight: bold;
+            }
+
+            .summary-table td:last-child {
+                text-align: right;
+            }
+
+        .text-danger {
+            color: #dc3545;
+        }
+
+        .text-success {
+            color: #28a745;
         }
 
         .footer {
             margin-top: 30px;
-            text-align: left;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
             font-size: 10px;
-            border-top: 1px solid black;
-            padding-top: 20px;
+            text-align: center;
+            color: #777;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 100px;
         }
 
         .signature-line {
-            margin-top: 100px;
-            width: 50%;
+            width: 200px;
             border-top: 1px solid black;
             text-align: center;
             padding-top: 5px;
         }
 
-        .company-footer {
-            margin-top: 5px;
+        .signature-title {
             font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            color: rgba(104, 42, 122, 0.07);
+            font-size: 100px;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: -1;
         }
     </style>
 </head>
 <body>
+    <div class="watermark">Sivar Delivery</div>
+
     <div class="header">
-        <!-- Agregar la imagen del logo al principio -->
-        <img src="/Imagenes/logo.png" alt="Logo Mandaditos" style="max-height: 50px; margin-bottom: 10px;">
-        <div class="company-name">Sivar Delivery, S.A DE C.V.</div>
-        <div class="document-title">Constancia de Empleado</div>
+        <img src="/Imagenes/sivarDelivery.jpg" alt="Sivar Delivery" class="logo">
+        <div class="company-name">SIVAR DELIVERY, S.A. DE C.V.</div>
+        <div class="document-title">CONSTANCIA DE PLANILLA DE PAGO</div>
+        <div class="document-subtitle">Período: @Model.Mes/@Model.Año</div>
     </div>
 
-    <div class="period-info">
-        <div>Periodo: @Model.Mes/@Model.Año</div>
-        <div>Fecha de generación: @DateTime.Now.ToString("yyyy-MM-dd")</div>
+    <div class="info-container">
+        <div class="info-block">
+            <div class="info-title">Información del Empleado</div>
+            <div class="info-row">
+                <div class="info-label">Nombre:</div>
+                <div class="info-value">@Model.Trabajador?.Nombre</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Cargo:</div>
+                <div class="info-value">@Model.Trabajador?.Cargo</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">DUI:</div>
+                <div class="info-value">@Model.Trabajador?.Dui</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">NIT:</div>
+                <div class="info-value">@Model.Trabajador?.Nit</div>
+            </div>
+        </div>
+        <div class="info-block">
+            <div class="info-title">Información Laboral</div>
+            <div class="info-row">
+                <div class="info-label">Fecha de Contratación:</div>
+                <div class="info-value">@Model.Trabajador?.FechaContratacion.ToString("dd/MM/yyyy")</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Antigüedad:</div>
+                @{
+                    var fechaCorte = new DateOnly(Model.Año, Model.Mes, DateTime.DaysInMonth(Model.Año, Model.Mes));
+                    double antiguedad = 0;
+                    if (Model.Trabajador != null)
+                    {
+                        antiguedad = (fechaCorte.ToDateTime(TimeOnly.MinValue) -
+                        Model.Trabajador.FechaContratacion.ToDateTime(TimeOnly.MinValue)).TotalDays / 365.0;
+                    }
+                }
+                <div class="info-value">@antiguedad.ToString("F2") años</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Salario Base:</div>
+                <div class="info-value">$@(Model.Trabajador?.SalarioBase.ToString("N2") ?? "0.00")</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Días Trabajados:</div>
+                <div class="info-value">@Model.DiasTrabajados</div>
+            </div>
+        </div>
     </div>
 
-    <div class="section-title">Información del Empleado</div>
-
+    <div class="section-title">Detalles de Pago</div>
     <table>
         <tr>
-            <td class="label-column">Nombre:</td>
-            <td class="value-column">@Model.Trabajador?.Nombre</td>
+            <th style="width: 40%;">Concepto</th>
+            <th style="width: 30%; text-align: right;">Ingresos</th>
+            <th style="width: 30%; text-align: right;">Deducciones</th>
         </tr>
         <tr>
-            <td class="label-column">Número de Documento:</td>
-            <td class="value-column">@Model.Trabajador?.Dui</td>
+            <td>Salario Base (@Model.DiasTrabajados días)</td>
+            <td style="text-align: right;">
+                @{
+                    decimal salarioDias = 0;
+                    if (Model.Trabajador != null)
+                    {
+                        salarioDias = Model.Trabajador.SalarioBase / 30 * Model.DiasTrabajados;
+                    }
+                }
+                $@salarioDias.ToString("N2")
+            </td>
+            <td style="text-align: right;"></td>
+        </tr>
+        @if ((Model.HorasDiurnas ?? 0) > 0)
+        {
+            <tr>
+                <td>Horas Extra Diurnas (@Model.HorasDiurnasCantidad horas)</td>
+                <td style="text-align: right;">$@((Model.HorasDiurnas ?? 0).ToString("N2"))</td>
+                <td style="text-align: right;"></td>
+            </tr>
+        }
+        @if ((Model.HorasNocturnas ?? 0) > 0)
+        {
+            <tr>
+                <td>Horas Extra Nocturnas (@Model.HorasNocturnasCantidad horas)</td>
+                <td style="text-align: right;">$@((Model.HorasNocturnas ?? 0).ToString("N2"))</td>
+                <td style="text-align: right;"></td>
+            </tr>
+        }
+        @if ((Model.Feriado ?? 0) > 0)
+        {
+            <tr>
+                <td>Feriado</td>
+                <td style="text-align: right;">$@((Model.Feriado ?? 0).ToString("N2"))</td>
+                <td style="text-align: right;"></td>
+            </tr>
+        }
+        @if ((Model.Vacaciones ?? 0) > 0)
+        {
+            <tr>
+                <td>Vacaciones</td>
+                <td style="text-align: right;">$@((Model.Vacaciones ?? 0).ToString("N2"))</td>
+                <td style="text-align: right;"></td>
+            </tr>
+        }
+        @if ((Model.Aguinaldo ?? 0) > 0)
+        {
+            <tr>
+                <td>Aguinaldo</td>
+                <td style="text-align: right;">$@((Model.Aguinaldo ?? 0).ToString("N2"))</td>
+                <td style="text-align: right;"></td>
+            </tr>
+        }
+        @if ((Model.Indemnizacion ?? 0) > 0)
+        {
+            <tr>
+                <td>Indemnización</td>
+                <td style="text-align: right;">$@((Model.Indemnizacion ?? 0).ToString("N2"))</td>
+                <td style="text-align: right;"></td>
+            </tr>
+        }
+        @if ((Model.Reintegro ?? 0) > 0)
+        {
+            <tr>
+                <td>Reintegro</td>
+                <td style="text-align: right;">$@((Model.Reintegro ?? 0).ToString("N2"))</td>
+                <td style="text-align: right;"></td>
+            </tr>
+        }
+        @if ((Model.Incapacidad ?? 0) > 0)
+        {
+            <tr>
+                <td>Incapacidad</td>
+                <td style="text-align: right;">$@((Model.Incapacidad ?? 0).ToString("N2"))</td>
+                <td style="text-align: right;"></td>
+            </tr>
+        }
+        @if ((Model.Permisos ?? 0) > 0)
+        {
+            <tr>
+                <td>Permisos</td>
+                <td style="text-align: right;">$@((Model.Permisos ?? 0).ToString("N2"))</td>
+                <td style="text-align: right;"></td>
+            </tr>
+        }
+        <tr>
+            <td>ISSS (3%)</td>
+            <td style="text-align: right;"></td>
+            <td style="text-align: right;" class="text-danger">$@((Model.Isss ?? 0).ToString("N2"))</td>
         </tr>
         <tr>
-            <td class="label-column">Salario:</td>
-            <td class="value-column">$ @Model.Trabajador?.SalarioBase.ToString("F2")</td>
+            <td>AFP (7.25%)</td>
+            <td style="text-align: right;"></td>
+            <td style="text-align: right;" class="text-danger">$@((Model.Afp ?? 0).ToString("N2"))</td>
         </tr>
         <tr>
-            <td class="label-column">Horas Diurnas:</td>
-            <td class="value-column">$ @Model.HorasDiurnas?.ToString("F2")</td>
+            <td>Renta</td>
+            <td style="text-align: right;"></td>
+            <td style="text-align: right;" class="text-danger">$@((Model.Renta ?? 0).ToString("N2"))</td>
         </tr>
-        <tr>
-            <td class="label-column">Horas Nocturnas:</td>
-            <td class="value-column">$ @Model.HorasNocturnas?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Feriado:</td>
-            <td class="value-column">$ @Model.Feriado?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Reintegro:</td>
-            <td class="value-column">$ @Model.Reintegro?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Incapacidad:</td>
-            <td class="value-column">$ @Model.Incapacidad?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Permisos:</td>
-            <td class="value-column">$ @Model.Permisos?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Vacaciones:</td>
-            <td class="value-column">$ @Model.Vacaciones?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Indemnización:</td>
-            <td class="value-column">$ @Model.Indemnizacion?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Aguinaldo:</td>
-            <td class="value-column">$ @Model.Aguinaldo?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Total mensual:</td>
-            <td class="value-column">$ @Model.SalarioBruto?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">AFP Laboral:</td>
-            <td class="value-column">$ @Model.Afp?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">ISSS Laboral:</td>
-            <td class="value-column">$ @Model.Isss?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Renta:</td>
-            <td class="value-column">$ @Model.Renta?.ToString("F2")</td>
-        </tr>
-        <tr>
-            <td class="label-column">Total a Pagar:</td>
-            <td class="value-column">$ @Model.SalarioNeto?.ToString("F2")</td>
+        <tr style="background-color: #f0f0f0; font-weight: bold;">
+            <td>TOTALES</td>
+            <td style="text-align: right;">$@((Model.SalarioBruto ?? 0).ToString("N2"))</td>
+            <td style="text-align: right;" class="text-danger">$@(((Model.Isss ?? 0) + (Model.Afp ?? 0) + (Model.Renta ?? 0)).ToString("N2"))</td>
         </tr>
     </table>
 
-    <div class="signature-line">F.</div>
-    <div class="company-footer">MANDADITOS, S.A DE C.V.</div>
+    <table class="summary-table">
+        <tr>
+            <td>Salario Bruto</td>
+            <td>$@((Model.SalarioBruto ?? 0).ToString("N2"))</td>
+        </tr>
+        <tr>
+            <td>Total Deducciones</td>
+            <td class="text-danger">$@(((Model.Isss ?? 0) + (Model.Afp ?? 0) + (Model.Renta ?? 0)).ToString("N2"))</td>
+        </tr>
+        <tr style="font-weight: bold;">
+            <td>SALARIO NETO</td>
+            <td class="text-success">$@((Model.SalarioNeto ?? 0).ToString("N2"))</td>
+        </tr>
+    </table>
+
+    <div class="section-title">Información Adicional para el Empleador</div>
+    <table>
+        <tr>
+            <th style="width: 40%;">Concepto</th>
+            <th style="width: 30%; text-align: right;">Monto</th>
+            <th style="width: 30%; text-align: right;">Observaciones</th>
+        </tr>
+        <tr>
+            <td>ISSS Patronal (7.5%)</td>
+            <td style="text-align: right;">
+                @{
+                    decimal isssPatronal = (Model.SalarioBruto ?? 0) > 1000 ? 75 : (Model.SalarioBruto ?? 0) * 0.075m;
+                }
+                $@isssPatronal.ToString("N2")
+            </td>
+            <td style="text-align: right;">
+                @(((Model.SalarioBruto ?? 0) > 1000 ? "Tope máximo" : ""))
+            </td>
+        </tr>
+        <tr>
+            <td>AFP Patronal (8.75%)</td>
+            <td style="text-align: right;">
+                @{
+                    decimal afpPatronal = (Model.SalarioBruto ?? 0) * 0.0875m;
+                }
+                $@afpPatronal.ToString("N2")
+            </td>
+            <td style="text-align: right;"></td>
+        </tr>
+        <tr style="font-weight: bold; background-color: #f0f0f0;">
+            <td>Total a Pagar en Planilla Única</td>
+            <td style="text-align: right;">
+                @{
+                    decimal montoPlanillaUnica = isssPatronal + afpPatronal + (Model.Isss ?? 0) + (Model.Afp ?? 0);
+                }
+                $@montoPlanillaUnica.ToString("N2")
+            </td>
+            <td style="text-align: right;"></td>
+        </tr>
+    </table>
+
+    <div class="signature-section">
+        <div>
+            <div class="signature-title">Empleado</div>
+            <div>@Model.Trabajador?.Nombre</div>
+        </div>
+        <div>
+            <div class="signature-title">Empleador</div>
+            <div>SIVAR DELIVERY, S.A. DE C.V.</div>
+        </div>
+    </div>
 
     <div class="footer">
-        <p>Nota: Estimado empleado, por este medio se hace de su conocimiento que la tasa de cotización al Sistema será del 7.25% por parte del trabajador, mientras que el aporte del Instituto Salvadoreño del Seguro Social (ISSS) será del 3% o $30.00 si su sueldo es mayor a $1,000.00, de igual forma, por sueldos mayores a $472.01 se hará su retención de renta respectiva.</p>
+        <p>Nota: Este documento es una constancia oficial de pago. Conserve este documento para fines fiscales y de seguridad social.</p>
+        <p>Generado el: @DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")</p>
     </div>
 </body>
 </html>

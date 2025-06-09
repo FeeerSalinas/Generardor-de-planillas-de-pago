@@ -29,6 +29,9 @@ namespace ProyectoANF
             builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
             builder.Services.AddScoped<IEmailService, EmailService>();
 
+            // Registrar nuestro nuevo servicio de cálculos
+            builder.Services.AddScoped<IPlanillaCalculationService, PlanillaCalculationService>();
+
             var app = builder.Build();
 
             if (!app.Environment.IsDevelopment())

@@ -253,6 +253,69 @@
                 margin: 0;
             }
 
+        .auto-calc-info {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+            .auto-calc-info i {
+                margin-right: 0.3rem;
+                color: var(--secondary-color);
+            }
+
+        .form-floating {
+            position: relative;
+        }
+
+            .form-floating > .form-control {
+                padding-top: 1.625rem;
+                padding-bottom: 0.625rem;
+                height: calc(3.5rem + 2px);
+            }
+
+            .form-floating > label {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                padding: 1rem 0.75rem;
+                overflow: hidden;
+                text-align: start;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                pointer-events: none;
+                border: 1px solid transparent;
+                transform-origin: 0 0;
+                transition: opacity .1s ease-in-out,transform .1s ease-in-out;
+            }
+
+        .tooltip-icon {
+            display: inline-block;
+            margin-left: 0.5rem;
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        .currency-input:focus, .date-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(155, 79, 150, 0.2);
+        }
+
+        .date-input {
+            cursor: pointer;
+        }
+
+        input.is-invalid {
+            border-color: #dc3545;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(.375em + .1875rem) center;
+            background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+        }
+
         @@media (max-width: 767.98px) {
             .page-container {
                 max-width: 100%;
@@ -285,7 +348,7 @@
         </div>
 
         <div class="form-card">
-            <form asp-controller="Planilla" asp-action="CrearPlanilla" method="post">
+            <form asp-controller="Planilla" asp-action="CrearPlanilla" method="post" id="planillaForm">
                 <div class="form-section">
                     <h3 class="section-title">
                         <i class="fas fa-user-check"></i>
@@ -295,7 +358,7 @@
                         <label class="form-label" for="TrabajadorId">Selecciona un trabajador</label>
                         <div class="input-icon">
                             <i class="fas fa-user"></i>
-                            <select asp-for="TrabajadorId" class="form-select"
+                            <select asp-for="TrabajadorId" class="form-select" required
                                     asp-items="@(new SelectList((IEnumerable<ProyectoANF.Models.Trabajadore>)ViewData["Trabajadores"], "TrabajadorId", "Nombre"))">
                                 <option value="">Seleccione un trabajador</option>
                             </select>
@@ -311,11 +374,18 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label" for="Mes">Mes</label>
+                                <label class="form-label" for="Mes">
+                                    Mes
+                                    <i class="fas fa-info-circle tooltip-icon" title="El mes afecta el cálculo de vacaciones y aguinaldo (solo en Diciembre)"></i>
+                                </label>
                                 <div class="input-icon">
                                     <i class="fas fa-calendar-day"></i>
-                                    <input class="form-control" type="number" placeholder="1-12" required maxlength="2" min="1" max="12" asp-for="Mes" />
+                                    <input class="form-control" type="number" placeholder="1-12" required maxlength="2" min="1" max="12" asp-for="Mes"
+                                           pattern="\d{1,2}" title="Ingrese un mes válido (1-12)" />
                                 </div>
+                                <span class="auto-calc-info">
+                                    <i class="fas fa-calculator"></i>Vacaciones y aguinaldo se calculan automáticamente si el mes es 12 (Diciembre)
+                                </span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -323,7 +393,8 @@
                                 <label class="form-label" for="Año">Año</label>
                                 <div class="input-icon">
                                     <i class="fas fa-calendar-check"></i>
-                                    <input class="form-control" type="number" placeholder="YYYY" required min="2000" max="2100" asp-for="Año" />
+                                    <input class="form-control year-input" type="number" placeholder="YYYY" required min="2000" max="2100" asp-for="Año"
+                                           pattern="\d{4}" title="Ingrese un año válido de 4 dígitos" />
                                 </div>
                             </div>
                         </div>
@@ -333,7 +404,8 @@
                         <label class="form-label" for="DiasTrabajados">Días trabajados</label>
                         <div class="input-icon">
                             <i class="fas fa-business-time"></i>
-                            <input class="form-control" type="number" placeholder="1-30" required min="1" max="30" asp-for="DiasTrabajados" />
+                            <input class="form-control" type="number" placeholder="1-30" required min="1" max="30" asp-for="DiasTrabajados"
+                                   pattern="\d{1,2}" title="Ingrese un número entre 1 y 30" />
                         </div>
                     </div>
                 </div>
@@ -346,20 +418,34 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label" for="HorasDiurnasCantidad">Horas extra diurnas</label>
+                                <label class="form-label" for="HorasDiurnasCantidad">
+                                    Horas extra diurnas
+                                    <i class="fas fa-info-circle tooltip-icon" title="Se pagan al doble del valor hora normal (Salario/30/8*2)"></i>
+                                </label>
                                 <div class="input-icon">
                                     <i class="fas fa-sun"></i>
-                                    <input class="form-control" type="number" placeholder="0+" required min="0" asp-for="HorasDiurnasCantidad" />
+                                    <input class="form-control" type="number" placeholder="0+" required min="0" step="1" asp-for="HorasDiurnasCantidad"
+                                           title="Ingrese la cantidad de horas extra diurnas" />
                                 </div>
+                                <span class="auto-calc-info">
+                                    <i class="fas fa-calculator"></i>Se calcula como: (Salario/30/8)*2*cantidad de horas
+                                </span>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label" for="HorasNocturnasCantidad">Horas extra nocturnas</label>
+                                <label class="form-label" for="HorasNocturnasCantidad">
+                                    Horas extra nocturnas
+                                    <i class="fas fa-info-circle tooltip-icon" title="Se pagan al 2.5 del valor hora normal (Salario/30/8*2.5)"></i>
+                                </label>
                                 <div class="input-icon">
                                     <i class="fas fa-moon"></i>
-                                    <input class="form-control" type="number" placeholder="0+" required min="0" asp-for="HorasNocturnasCantidad" />
+                                    <input class="form-control" type="number" placeholder="0+" required min="0" step="1" asp-for="HorasNocturnasCantidad"
+                                           title="Ingrese la cantidad de horas extra nocturnas" />
                                 </div>
+                                <span class="auto-calc-info">
+                                    <i class="fas fa-calculator"></i>Se calcula como: (Salario/30/8)*2.5*cantidad de horas
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -373,11 +459,18 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label" for="FeriadoCantidad">Feriado</label>
+                                <label class="form-label" for="FeriadoCantidad">
+                                    Feriado
+                                    <i class="fas fa-info-circle tooltip-icon" title="Se paga al doble del valor hora normal"></i>
+                                </label>
                                 <div class="input-icon">
                                     <i class="fas fa-gift"></i>
-                                    <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="FeriadoCantidad" />
+                                    <input class="form-control currency-input" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="FeriadoCantidad"
+                                           title="Ingrese el monto por feriados" />
                                 </div>
+                                <span class="auto-calc-info">
+                                    <i class="fas fa-calculator"></i>Se calcula como: (Salario/30/8)*2*cantidad
+                                </span>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -385,7 +478,8 @@
                                 <label class="form-label" for="Reintegro">Reintegro</label>
                                 <div class="input-icon">
                                     <i class="fas fa-undo"></i>
-                                    <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Reintegro" />
+                                    <input class="form-control currency-input" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Reintegro"
+                                           title="Ingrese el monto de reintegro" />
                                 </div>
                             </div>
                         </div>
@@ -397,7 +491,8 @@
                                 <label class="form-label" for="Incapacidad">Incapacidad</label>
                                 <div class="input-icon">
                                     <i class="fas fa-first-aid"></i>
-                                    <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Incapacidad" />
+                                    <input class="form-control currency-input" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Incapacidad"
+                                           title="Ingrese el monto por incapacidad" />
                                 </div>
                             </div>
                         </div>
@@ -406,7 +501,8 @@
                                 <label class="form-label" for="Permisos">Permisos</label>
                                 <div class="input-icon">
                                     <i class="fas fa-file-signature"></i>
-                                    <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Permisos" />
+                                    <input class="form-control currency-input" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Permisos"
+                                           title="Ingrese el monto por permisos" />
                                 </div>
                             </div>
                         </div>
@@ -417,15 +513,23 @@
                     <h3 class="section-title">
                         <i class="fas fa-hand-holding-usd"></i>
                         Beneficios Anuales
+                        <i class="fas fa-info-circle tooltip-icon" title="Estos valores pueden calcularse automáticamente según la antigüedad del empleado"></i>
                     </h3>
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label class="form-label" for="Vacaciones">Vacaciones</label>
+                                <label class="form-label" for="Vacaciones">
+                                    Vacaciones
+                                    <i class="fas fa-info-circle tooltip-icon" title="Solo se calcula en Diciembre para empleados con más de 1 año de antigüedad"></i>
+                                </label>
                                 <div class="input-icon">
                                     <i class="fas fa-umbrella-beach"></i>
-                                    <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Vacaciones" />
+                                    <input class="form-control currency-input" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Vacaciones"
+                                           title="Deje en 0 para cálculo automático o ingrese un valor manual" />
                                 </div>
+                                <span class="auto-calc-info">
+                                    <i class="fas fa-calculator"></i>En Diciembre: 15 días (Salario/2) + bono según antigüedad
+                                </span>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -433,17 +537,25 @@
                                 <label class="form-label" for="Indemnizacion">Indemnización</label>
                                 <div class="input-icon">
                                     <i class="fas fa-file-contract"></i>
-                                    <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Indemnizacion" />
+                                    <input class="form-control currency-input" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Indemnizacion"
+                                           title="Ingrese el monto de indemnización si aplica" />
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label class="form-label" for="Aguinaldo">Aguinaldo</label>
+                                <label class="form-label" for="Aguinaldo">
+                                    Aguinaldo
+                                    <i class="fas fa-info-circle tooltip-icon" title="Solo se calcula en Diciembre y varía según antigüedad"></i>
+                                </label>
                                 <div class="input-icon">
                                     <i class="fas fa-holly-berry"></i>
-                                    <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Aguinaldo" />
+                                    <input class="form-control currency-input" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Aguinaldo"
+                                           title="Deje en 0 para cálculo automático o ingrese un valor manual" />
                                 </div>
+                                <span class="auto-calc-info">
+                                    <i class="fas fa-calculator"></i>Varía según años: <1 año (proporcional), 1-3 años (medio salario), 3-10 años (19 días),>10 años (21 días)
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -479,5 +591,90 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inicializar tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Validación de formato para el año (4 dígitos)
+            const yearInput = document.querySelector('.year-input');
+            yearInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '').substring(0, 4);
+                validateYearInput(this);
+            });
+
+            yearInput.addEventListener('blur', function() {
+                validateYearInput(this);
+            });
+
+            function validateYearInput(input) {
+                const year = parseInt(input.value);
+                if (isNaN(year) || year < 2000 || year > 2100) {
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            }
+
+            // Formateo de campos monetarios
+            const currencyInputs = document.querySelectorAll('.currency-input');
+            currencyInputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value && !isNaN(this.value)) {
+                        this.value = parseFloat(this.value).toFixed(2);
+                    }
+                });
+            });
+
+            // Validación de formulario
+            const form = document.getElementById('planillaForm');
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    // Resaltar campos con error
+                    const invalidInputs = form.querySelectorAll(':invalid');
+                    invalidInputs.forEach(input => {
+                        input.classList.add('is-invalid');
+
+                        // Scroll al primer campo inválido
+                        if (invalidInputs[0]) {
+                            invalidInputs[0].scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }
+                    });
+                }
+
+                form.classList.add('was-validated');
+            });
+
+            // Quitar clase de inválido al corregir
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.checkValidity()) {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            });
+
+            // Formateo del campo mes (1-12)
+            const mesInput = document.querySelector('input[name="Mes"]');
+            mesInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '').substring(0, 2);
+                const mes = parseInt(this.value);
+                if (!isNaN(mes)) {
+                    if (mes > 12) this.value = "12";
+                    if (mes < 1) this.value = "1";
+                }
+            });
+        });
+    </script>
 </body>
 </html>

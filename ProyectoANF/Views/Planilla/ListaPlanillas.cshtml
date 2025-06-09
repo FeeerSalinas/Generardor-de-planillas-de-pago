@@ -10,7 +10,7 @@
 
 <div class="container-fluid py-5 bg-light">
     <div class="row justify-content-center">
-        <div class="col-lg-11">
+        <div class="col-lg-12">
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4 text-custom-primary fw-bold">
@@ -51,56 +51,101 @@
                         </div>
                     </div>
 
-                    <!-- Tabla de planillas -->
+                    <!-- Tabla de planillas alineada con el Excel -->
                     <div class="table-responsive">
                         <table class="table table-hover align-middle" id="tablaPlanillas">
                             <thead>
                                 <tr class="bg-custom-primary text-white">
-                                    <th>Empleado</th>
-                                    <th class="text-center">Mes/Año</th>
-                                    <th class="text-center">Días</th>
-                                    <th class="text-center">H. Diurnas</th>
-                                    <th class="text-center">H. Nocturnas</th>
-                                    <th class="text-center">Feriado</th>
-                                    <th class="text-center">Reintegro</th>
-                                    <th class="text-center">Incapacidad</th>
-                                    <th class="text-center">Permisos</th>
-                                    <th class="text-center">Vacaciones</th>
-                                    <th class="text-center">Indemnización</th>
-                                    <th class="text-center">Aguinaldo</th>
-                                    <th class="text-end">Total Mensual</th>
-                                    <th class="text-end">ISSS</th>
-                                    <th class="text-end">AFP</th>
-                                    <th class="text-end">Renta</th>
-                                    <th class="text-end">Total a Pagar</th>
-                                    <th class="text-center">Fecha</th>
+                                    <th>Área</th>
+                                    <th>Cargo</th>
+                                    <th>Ingreso a Empresa</th>
+                                    <th>Fecha Corte</th>
+                                    <th class="text-end">Salario Mensual</th>
+                                    <th class="text-end">Viáticos u Otros</th>
+                                    <th class="text-center">Meses</th>
+                                    <th class="text-center">Tiempo en Empresa</th>
+                                    <th class="text-end">Horas Extra Diurnas</th>
+                                    <th class="text-end">Horas Extra Nocturnas</th>
+                                    <th class="text-end">Vacaciones</th>
+                                    <th class="text-end">Bono Vacaciones</th>
+                                    <th class="text-end">Aguinaldo</th>
+                                    <th class="text-end">Bono Aguinaldo</th>
+                                    <th class="text-end">Monto Cotizable</th>
+                                    <th class="text-end">ISSS Patronal</th>
+                                    <th class="text-end">AFP Patronal</th>
+                                    <th class="text-end">ISSS Empleado</th>
+                                    <th class="text-end">AFP Empleado</th>
+                                    <th class="text-end">Total Depositar</th>
+                                    <th class="text-end">Monto Planilla Única</th>
                                     <th class="text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white">
                                 @foreach (var item in Model)
                                 {
+                                    // Calcular campos adicionales exactamente como en Excel
+
+                                    // MESES = MONTH(D6) - El mes de la fecha de ingreso
+                                    int mesDeIngreso = item.Trabajador?.FechaContratacion.Month ?? 0;
+
+                                    // TIEMPO EN EMPRESA = (E6-D6)/365 - La diferencia entre la fecha de corte y la fecha de ingreso en años
+                                    var fechaCorte = new DateOnly(item.Año, item.Mes, DateTime.DaysInMonth(item.Año, item.Mes));
+                                    double añosAntiguedad = 0;
+                                    if (item.Trabajador != null)
+                                    {
+                                        añosAntiguedad = (fechaCorte.ToDateTime(TimeOnly.MinValue) -
+                                        item.Trabajador.FechaContratacion.ToDateTime(TimeOnly.MinValue)).TotalDays / 365.0;
+                                    }
+
+                                    // Calcular el bono de vacaciones según la lógica del Excel
+                                    decimal bonoVacaciones = 0;
+                                    if (item.Trabajador != null && item.Mes == 12 && mesDeIngreso == 12)
+                                    {
+                                        if (añosAntiguedad <= 2)
+                                            bonoVacaciones = 0;
+                                        else if (añosAntiguedad < 5)
+                                            bonoVacaciones = (item.Trabajador.SalarioBase / 2) * 0.05m;
+                                        else
+                                            bonoVacaciones = (item.Trabajador.SalarioBase / 2) * 0.3m;
+                                    }
+
+                                    // Calcular el bono de aguinaldo según la lógica del Excel
+                                    decimal bonoAguinaldo = 0;
+                                    if (item.Trabajador != null && item.Mes == 12 && mesDeIngreso == 12 && añosAntiguedad > 3)
+                                    {
+                                        bonoAguinaldo = item.Trabajador.SalarioBase - (item.Aguinaldo ?? 0);
+                                    }
+
+                                    // Calcular ISSS Patronal y AFP Patronal exactamente como en Excel
+                                    decimal isssPatronal = (item.SalarioBruto ?? 0) > 1000 ? 75 : (item.SalarioBruto ?? 0) * 0.075m;
+                                    decimal afpPatronal = (item.SalarioBruto ?? 0) * 0.0875m;
+                                    decimal montoPlanillaUnica = isssPatronal + afpPatronal + (item.Isss ?? 0) + (item.Afp ?? 0);
+
+                                    // Obtener el área como la primera palabra del cargo
+                                    string area = item.Trabajador?.Cargo?.Split(' ').FirstOrDefault() ?? "N/A";
+
                                     <tr data-empleado-id="@item.TrabajadorId" class="border-bottom">
-                                        <td class="fw-semibold">@(item.Trabajador?.Nombre ?? "N/A")</td>
-                                        <td class="text-center">@item.Mes/@item.Año</td>
-                                        <td class="text-center">@item.DiasTrabajados</td>
-                                        <td class="text-center">@(item.HorasDiurnas?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-center">@(item.HorasNocturnas?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-center">@(item.Feriado?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-center">@(item.Reintegro?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-center">@(item.Incapacidad?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-center">@(item.Permisos?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-center">@(item.Vacaciones?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-center">@(item.Indemnizacion?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-center">@(item.Aguinaldo?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-end fw-bold">@(item.SalarioBruto?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-end text-danger">@(item.Isss?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-end text-danger">@(item.Afp?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-end text-danger">@(item.Renta?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-end fw-bold text-success">@(item.SalarioNeto?.ToString("C") ?? "$0.00")</td>
-                                        <td class="text-center">
-                                            @(item.FechaGeneracion?.ToString("dd/MM/yyyy") ?? "N/A")
-                                        </td>
+                                        <td>@area</td>
+                                        <td>@(item.Trabajador?.Cargo ?? "N/A")</td>
+                                        <td>@(item.Trabajador?.FechaContratacion.ToString("dd/MM/yyyy") ?? "N/A")</td>
+                                        <td>@(fechaCorte.ToString("dd/MM/yyyy"))</td>
+                                        <td class="text-end">@(item.Trabajador?.SalarioBase.ToString("C") ?? "$0.00")</td>
+                                        <td class="text-end">@((item.Feriado ?? 0).ToString("C"))</td>
+                                        <td class="text-center">@mesDeIngreso</td>
+                                        <td class="text-center">@añosAntiguedad.ToString("F2")</td>
+                                        <td class="text-end">@((item.HorasDiurnas ?? 0).ToString("C"))</td>
+                                        <td class="text-end">@((item.HorasNocturnas ?? 0).ToString("C"))</td>
+                                        <td class="text-end">@((item.Vacaciones ?? 0).ToString("C"))</td>
+                                        <td class="text-end">@(bonoVacaciones.ToString("C"))</td>
+                                        <td class="text-end">@((item.Aguinaldo ?? 0).ToString("C"))</td>
+                                        <td class="text-end">@(bonoAguinaldo.ToString("C"))</td>
+                                        <td class="text-end">@((item.SalarioBruto ?? 0).ToString("C"))</td>
+                                        <td class="text-end">@(isssPatronal.ToString("C"))</td>
+                                        <td class="text-end">@(afpPatronal.ToString("C"))</td>
+                                        <td class="text-end">@((item.Isss ?? 0).ToString("C"))</td>
+                                        <td class="text-end">@((item.Afp ?? 0).ToString("C"))</td>
+                                        <td class="text-end fw-bold text-success">@((item.SalarioNeto ?? 0).ToString("C"))</td>
+                                        <td class="text-end">@(montoPlanillaUnica.ToString("C"))</td>
                                         <td class="text-center">
                                             <div class="btn-group">
                                                 <a asp-controller="Planilla" asp-action="GenerarPDF"
@@ -123,6 +168,28 @@
                                     </tr>
                                 }
                             </tbody>
+                            <tfoot>
+                                <tr class="bg-light fw-bold">
+                                    <td colspan="4" class="text-end">TOTALES:</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalSalarioBase).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalViaticos).ToString("C"))</td>
+                                    <td colspan="2"></td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalHorasDiurnas).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalHorasNocturnas).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalVacaciones).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalBonoVacaciones).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalAguinaldo).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalBonoAguinaldo).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalMontoCotizable).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalIsssPatronal).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalAfpPatronal).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalIsssEmpleado).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalAfpEmpleado).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalDepositar).ToString("C"))</td>
+                                    <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalPlanillaUnica).ToString("C"))</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
                         </table>
                         @if (TempData["Success"] != null)
                         {
@@ -204,10 +271,6 @@
     </div>
 </div>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-
 <style>
     :root {
         --primary-color: #682A7A;
@@ -264,10 +327,12 @@
     .table th {
         font-weight: 600;
         padding: 1rem;
+        white-space: nowrap;
     }
 
     .table td {
         padding: 1rem;
+        white-space: nowrap;
     }
 
     .btn-group .btn {
@@ -312,17 +377,51 @@
         transition: background-color 0.2s ease-in-out;
     }
 
-    /* Ajuste para la tabla con más columnas */
+    /* Ajustes para la tabla más grande */
     .table-responsive {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
 
-    .table th, .table td {
-        white-space: nowrap;
-        min-width: 100px;
+    /* Estilo para el footer de la tabla */
+    .table tfoot tr {
+        font-weight: bold;
+        background-color: #f0f0f0;
     }
+
+    /* Estilo para la home-link */
+    .home-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        margin-bottom: 1rem;
+        transition: all 0.2s ease;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        background-color: rgba(155, 79, 150, 0.1);
+    }
+
+        .home-link:hover {
+            color: white;
+            background-color: var(--primary-color);
+            transform: translateX(-5px);
+        }
+
+        .home-link i {
+            margin-right: 0.5rem;
+            transition: transform 0.2s ease;
+        }
+
+        .home-link:hover i {
+            transform: translateX(-3px);
+        }
 </style>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
