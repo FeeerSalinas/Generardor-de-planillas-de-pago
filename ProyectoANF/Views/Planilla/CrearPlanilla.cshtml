@@ -485,24 +485,69 @@
                         </div>
                     </div>
 
+                    <!-- Nuevos campos para Incapacidad y Permisos basados en días -->
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label" for="Incapacidad">Incapacidad</label>
+                                <label class="form-label" for="IncapacidadDias">
+                                    Días de Incapacidad
+                                    <i class="fas fa-info-circle tooltip-icon" title="Ingrese la cantidad de días de incapacidad. Para incapacidad común, la empresa paga los primeros 3 días al 75% del salario."></i>
+                                </label>
                                 <div class="input-icon">
                                     <i class="fas fa-first-aid"></i>
-                                    <input class="form-control currency-input" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Incapacidad"
-                                           title="Ingrese el monto por incapacidad" />
+                                    <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.5" max="30" asp-for="IncapacidadDias"
+                                           title="Ingrese la cantidad de días de incapacidad" />
+                                </div>
+                                <div class="mt-2">
+                                    <select class="form-select" asp-for="IncapacidadTipo" id="incapacidadTipo">
+                                        <option value="Común">Incapacidad Común</option>
+                                        <option value="Profesional">Incapacidad Profesional</option>
+                                    </select>
+                                    <span class="auto-calc-info">
+                                        <i class="fas fa-calculator"></i>Común: Empresa paga primeros 3 días al 75%. Profesional: ISSS paga desde día 1
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="form-label" for="Permisos">Permisos</label>
+                                <label class="form-label" for="PermisosDias">
+                                    Días de Permisos
+                                    <i class="fas fa-info-circle tooltip-icon" title="Ingrese la cantidad de días de permiso. Los permisos con goce de sueldo se pagan al 100%, los sin goce se descuentan."></i>
+                                </label>
                                 <div class="input-icon">
                                     <i class="fas fa-file-signature"></i>
-                                    <input class="form-control currency-input" type="number" placeholder="0.00" required min="0" step="0.01" asp-for="Permisos"
-                                           title="Ingrese el monto por permisos" />
+                                    <input class="form-control" type="number" placeholder="0.00" required min="0" step="0.5" max="30" asp-for="PermisosDias"
+                                           title="Ingrese la cantidad de días de permiso" />
+                                </div>
+                                <div class="mt-2">
+                                    <select class="form-select" asp-for="PermisosTipo" id="permisosTipo">
+                                        <option value="Con Goce">Con Goce de Sueldo</option>
+                                        <option value="Sin Goce">Sin Goce de Sueldo</option>
+                                    </select>
+                                    <span class="auto-calc-info">
+                                        <i class="fas fa-calculator"></i>Con Goce: se paga completo. Sin Goce: se descuenta de días trabajados
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Campos ocultos para los montos calculados -->
+                    <input type="hidden" asp-for="Incapacidad" id="incapacidadMonto" />
+                    <input type="hidden" asp-for="Permisos" id="permisosMonto" />
+
+                    <!-- Sección para mostrar los montos calculados (informativo) -->
+                    <div class="row mt-3" id="montosCalculadosContainer" style="display: none;">
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <strong>Monto por Incapacidad:</strong> <span id="montoIncapacidadCalculado">$0.00</span>
+                                    </div>
+                                    <div>
+                                        <strong>Monto por Permisos:</strong> <span id="montoPermisosCalculado">$0.00</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -666,15 +711,110 @@
 
             // Formateo del campo mes (1-12)
             const mesInput = document.querySelector('input[name="Mes"]');
-            mesInput.addEventListener('input', function() {
-                this.value = this.value.replace(/[^0-9]/g, '').substring(0, 2);
-                const mes = parseInt(this.value);
-                if (!isNaN(mes)) {
-                    if (mes > 12) this.value = "12";
-                    if (mes < 1) this.value = "1";
+        mesInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 2);
+        const mes = parseInt(this.value);
+        if (!isNaN(mes)) {
+        if (mes > 12) this.value = "12";
+        if (mes < 1) this.value = "1";
+        }
+        });
+
+        // Referencias a elementos para incapacidad y permisos
+        const incapacidadDiasInput = document.getElementById('IncapacidadDias');
+        const permisosDiasInput = document.getElementById('PermisosDias');
+        const incapacidadTipoSelect = document.getElementById('incapacidadTipo');
+        const permisosTipoSelect = document.getElementById('permisosTipo');
+        const trabajadorSelect = document.getElementById('TrabajadorId');
+        const montosContainer = document.getElementById('montosCalculadosContainer');
+        const montoIncapacidadSpan = document.getElementById('montoIncapacidadCalculado');
+        const montoPermisosSpan = document.getElementById('montoPermisosCalculado');
+        
+        // Mapa para almacenar salarios base por trabajador
+        const salariosPorTrabajador = {};
+        
+        // Función para calcular montos de incapacidad y permisos
+        function calcularMontos() {
+            if (!trabajadorSelect.value) return;
+            
+            const salarioBase = salariosPorTrabajador[trabajadorSelect.value] || 0;
+            if (salarioBase <= 0) return;
+            
+            const salarioDiario = salarioBase / 30;
+            let montoIncapacidad = 0;
+            let montoPermisos = 0;
+            
+            // Calcular incapacidad
+            const diasIncapacidad = parseFloat(incapacidadDiasInput.value) || 0;
+            if (diasIncapacidad > 0) {
+                if (incapacidadTipoSelect.value === 'Común') {
+                    const diasACargoDeLaEmpresa = Math.min(diasIncapacidad, 3);
+                    montoIncapacidad = diasACargoDeLaEmpresa * (salarioDiario * 0.75);
+                }
+                // Para incapacidad profesional, monto = 0 (va por ISSS)
+            }
+            
+            // Calcular permisos
+            const diasPermisos = parseFloat(permisosDiasInput.value) || 0;
+            if (diasPermisos > 0 && permisosTipoSelect.value === 'Con Goce') {
+                montoPermisos = diasPermisos * salarioDiario;
+            }
+            
+            // Actualizar información en pantalla
+            montoIncapacidadSpan.textContent = '$' + montoIncapacidad.toFixed(2);
+            montoPermisosSpan.textContent = '$' + montoPermisos.toFixed(2);
+            
+            // Mostrar contenedor de montos si hay algún valor
+            if (diasIncapacidad > 0 || diasPermisos > 0) {
+                montosContainer.style.display = 'block';
+            } else {
+                montosContainer.style.display = 'none';
+            }
+        }
+        
+        // Cargar salarios de trabajadores cuando se carga la página
+        if (trabajadorSelect) {
+            // Esto es un ejemplo simplificado. En una implementación real, se obtendría
+            // esta información del servidor mediante una llamada AJAX o datos precargados.
+            // Aquí asumimos un salario promedio de 500 para todos los trabajadores.
+            Array.from(trabajadorSelect.options).forEach(option => {
+                if (option.value) {
+                    salariosPorTrabajador[option.value] = 500; // Salario base ejemplo
                 }
             });
-        });
-    </script>
+            
+            trabajadorSelect.addEventListener('change', calcularMontos);
+        }
+        
+        // Eventos para recalcular cuando cambian los valores
+        if (incapacidadDiasInput) incapacidadDiasInput.addEventListener('input', calcularMontos);
+        if (permisosDiasInput) permisosDiasInput.addEventListener('input', calcularMontos);
+        if (incapacidadTipoSelect) incapacidadTipoSelect.addEventListener('change', calcularMontos);
+        if (permisosTipoSelect) permisosTipoSelect.addEventListener('change', calcularMontos);
+        
+        // Calcular montos iniciales
+        calcularMontos();
+        
+        // Validar que los días de permisos sin goce no excedan los días trabajados
+        const validarPermisosSinGoce = function() {
+            if (!permisosDiasInput || !permisosTipoSelect) return;
+            
+            const diasPermisos = parseFloat(permisosDiasInput.value) || 0;
+            const diasTrabajados = parseInt(document.querySelector('input[name="DiasTrabajados"]')?.value) || 0;
+            
+            if (permisosTipoSelect.value === 'Sin Goce' && diasPermisos > diasTrabajados) {
+                permisosDiasInput.setCustomValidity('Los días de permiso sin goce no pueden exceder los días trabajados');
+            } else {
+                permisosDiasInput.setCustomValidity('');
+            }
+        };
+        
+        if (permisosDiasInput && permisosTipoSelect) {
+            permisosDiasInput.addEventListener('input', validarPermisosSinGoce);
+            permisosTipoSelect.addEventListener('change', validarPermisosSinGoce);
+            document.querySelector('input[name="DiasTrabajados"]')?.addEventListener('input', validarPermisosSinGoce);
+        }
+    });
+</script>
 </body>
 </html>

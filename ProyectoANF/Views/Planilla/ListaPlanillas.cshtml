@@ -57,6 +57,7 @@
                             <thead>
                                 <tr class="bg-custom-primary text-white">
                                     <th>Área</th>
+                                    <th>Nombre</th> <!-- Nueva columna para el nombre del empleado -->
                                     <th>Cargo</th>
                                     <th>Ingreso a Empresa</th>
                                     <th>Fecha Corte</th>
@@ -66,6 +67,8 @@
                                     <th class="text-center">Tiempo en Empresa</th>
                                     <th class="text-end">Horas Extra Diurnas</th>
                                     <th class="text-end">Horas Extra Nocturnas</th>
+                                    <th class="text-end">Incapacidad</th>
+                                    <th class="text-end">Permisos</th>
                                     <th class="text-end">Vacaciones</th>
                                     <th class="text-end">Bono Vacaciones</th>
                                     <th class="text-end">Aguinaldo</th>
@@ -126,6 +129,7 @@
 
                                     <tr data-empleado-id="@item.TrabajadorId" class="border-bottom">
                                         <td>@area</td>
+                                        <td>@(item.Trabajador?.Nombre ?? "N/A")</td> <!-- Mostrar el nombre del empleado -->
                                         <td>@(item.Trabajador?.Cargo ?? "N/A")</td>
                                         <td>@(item.Trabajador?.FechaContratacion.ToString("dd/MM/yyyy") ?? "N/A")</td>
                                         <td>@(fechaCorte.ToString("dd/MM/yyyy"))</td>
@@ -135,6 +139,26 @@
                                         <td class="text-center">@añosAntiguedad.ToString("F2")</td>
                                         <td class="text-end">@((item.HorasDiurnas ?? 0).ToString("C"))</td>
                                         <td class="text-end">@((item.HorasNocturnas ?? 0).ToString("C"))</td>
+                                        <td class="text-end">
+                                            @if ((item.Incapacidad ?? 0) > 0)
+                                            {
+                                                <span title="@item.IncapacidadTipo">@((item.Incapacidad ?? 0).ToString("C")) (@item.IncapacidadDias días)</span>
+                                            }
+                                            else
+                                            {
+                                                @((item.Incapacidad ?? 0).ToString("C"))
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            @if ((item.Permisos ?? 0) > 0)
+                                            {
+                                                <span title="@item.PermisosTipo">@((item.Permisos ?? 0).ToString("C")) (@item.PermisosDias días)</span>
+                                            }
+                                            else
+                                            {
+                                                @((item.Permisos ?? 0).ToString("C"))
+                                            }
+                                        </td>
                                         <td class="text-end">@((item.Vacaciones ?? 0).ToString("C"))</td>
                                         <td class="text-end">@(bonoVacaciones.ToString("C"))</td>
                                         <td class="text-end">@((item.Aguinaldo ?? 0).ToString("C"))</td>
@@ -170,12 +194,13 @@
                             </tbody>
                             <tfoot>
                                 <tr class="bg-light fw-bold">
-                                    <td colspan="4" class="text-end">TOTALES:</td>
+                                    <td colspan="5" class="text-end">TOTALES:</td> <!-- Aumentado de 4 a 5 para incluir la columna de Nombre -->
                                     <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalSalarioBase).ToString("C"))</td>
                                     <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalViaticos).ToString("C"))</td>
                                     <td colspan="2"></td>
                                     <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalHorasDiurnas).ToString("C"))</td>
                                     <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalHorasNocturnas).ToString("C"))</td>
+                                    <td colspan="2"></td>
                                     <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalVacaciones).ToString("C"))</td>
                                     <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalBonoVacaciones).ToString("C"))</td>
                                     <td class="text-end">@(((decimal)((dynamic)ViewData["Totales"]).TotalAguinaldo).ToString("C"))</td>

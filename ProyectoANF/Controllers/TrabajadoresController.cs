@@ -27,12 +27,23 @@ namespace ProyectoANF.Controllers
             return View();
         }
 
+
+
+
         [HttpPost]
         public async Task<IActionResult> AgregarTrabajador(Trabajadore modelo)
         {
-
             if (ModelState.IsValid)
             {
+                // Verificar si ya existe un trabajador con este NIT
+                var trabajadorExistente = await _context.Trabajadores.FirstOrDefaultAsync(t => t.Nit == modelo.Nit);
+                if (trabajadorExistente != null)
+                {
+                    ViewData["Mensaje"] = "Ya existe un trabajador con este NIT registrado en el sistema.";
+                    return View(modelo);
+                }
+
+                // Continuar con la inserción normal si no existe
                 Trabajadore empleado = new Trabajadore
                 {
                     Nombre = modelo.Nombre,
@@ -48,7 +59,7 @@ namespace ProyectoANF.Controllers
                 };
                 await _context.Trabajadores.AddAsync(empleado);
                 await _context.SaveChangesAsync();
-                ViewData["Completado"] = "Empleado registrado con exito";
+                ViewData["Completado"] = "Empleado registrado con éxito";
                 return View();
             }
             else
@@ -56,8 +67,16 @@ namespace ProyectoANF.Controllers
                 ViewData["Mensaje"] = "No pudo registrarse el empleado";
                 return View();
             }
-            
         }
+
+
+
+
+
+
+
+
+
 
         [HttpGet]
         public async Task<IActionResult> Editar(int id)

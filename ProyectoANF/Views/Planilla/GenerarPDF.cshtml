@@ -325,7 +325,7 @@
         @if ((Model.Incapacidad ?? 0) > 0)
         {
             <tr>
-                <td>Incapacidad</td>
+                <td>Incapacidad (@Model.IncapacidadDias días - @Model.IncapacidadTipo)</td>
                 <td style="text-align: right;">$@((Model.Incapacidad ?? 0).ToString("N2"))</td>
                 <td style="text-align: right;"></td>
             </tr>
@@ -333,7 +333,7 @@
         @if ((Model.Permisos ?? 0) > 0)
         {
             <tr>
-                <td>Permisos</td>
+                <td>Permisos (@Model.PermisosDias días - @Model.PermisosTipo)</td>
                 <td style="text-align: right;">$@((Model.Permisos ?? 0).ToString("N2"))</td>
                 <td style="text-align: right;"></td>
             </tr>

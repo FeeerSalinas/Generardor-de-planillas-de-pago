@@ -16,6 +16,10 @@ namespace ProyectoANF.Services
         decimal CalcularAfp(decimal montoCotizable);
         decimal CalcularRenta(decimal salarioBruto, decimal isss, decimal afp);
         decimal CalcularBonoAguinaldo(decimal salarioBase, decimal aguinaldo, double añosAntiguedad);
+
+        // Nuevos métodos para incapacidad y permisos
+        decimal CalcularMontoIncapacidad(decimal salarioBase, decimal diasIncapacidad, string tipoIncapacidad);
+        decimal CalcularMontoPermisos(decimal salarioBase, decimal diasPermisos, string tipoPermiso);
     }
 
     public class PlanillaCalculationService : IPlanillaCalculationService
@@ -147,6 +151,49 @@ namespace ProyectoANF.Services
                 return (sobreElExceso - 2038.10m) * 0.3m + 288.57m;
 
             return 0;
+        }
+
+        /// <summary>
+        /// Calcula el monto de incapacidad basado en los días y el tipo.
+        /// Para incapacidad común, el empleador paga el 75% del salario por los primeros 3 días.
+        /// Para incapacidad profesional, el ISSS cubre desde el primer día.
+        /// </summary>
+        public decimal CalcularMontoIncapacidad(decimal salarioBase, decimal diasIncapacidad, string tipoIncapacidad)
+        {
+            decimal salarioDiario = salarioBase / 30;
+
+            if (tipoIncapacidad == "Común")
+            {
+                // Para incapacidad común, el empleador paga los primeros 3 días al 75%
+                decimal diasACargoDeLaEmpresa = Math.Min(diasIncapacidad, 3);
+                return diasACargoDeLaEmpresa * (salarioDiario * 0.75m);
+            }
+            else // "Profesional"
+            {
+                // Para incapacidad profesional, todo va por cuenta del ISSS
+                return 0; // No afecta el salario pagado por la empresa
+            }
+        }
+
+        /// <summary>
+        /// Calcula el monto de permisos basado en los días y el tipo.
+        /// Para permisos con goce de sueldo, se paga el 100% del salario.
+        /// Para permisos sin goce, no se paga (se descuenta de días trabajados).
+        /// </summary>
+        public decimal CalcularMontoPermisos(decimal salarioBase, decimal diasPermisos, string tipoPermiso)
+        {
+            decimal salarioDiario = salarioBase / 30;
+
+            if (tipoPermiso == "Con Goce")
+            {
+                // Permiso con goce de sueldo: se paga normal
+                return diasPermisos * salarioDiario;
+            }
+            else // "Sin Goce"
+            {
+                // Permiso sin goce: se descuenta del salario
+                return 0; // No suma al salario, se descuenta en días trabajados
+            }
         }
     }
 }

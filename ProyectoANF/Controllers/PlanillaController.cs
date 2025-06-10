@@ -46,7 +46,8 @@ namespace ProyectoANF.Controllers
                 TotalHorasNocturnas = todasLasPlanillas.Sum(p => p.HorasNocturnas ?? 0),
                 TotalVacaciones = todasLasPlanillas.Sum(p => p.Vacaciones ?? 0),
                 // Para Bono Vacaciones, lo calculamos ya que no está almacenado explícitamente
-                TotalBonoVacaciones = todasLasPlanillas.Sum(p => {
+                TotalBonoVacaciones = todasLasPlanillas.Sum(p =>
+                {
                     var trabajador = p.Trabajador;
                     if (trabajador != null && p.Mes == 12)
                     {
@@ -66,7 +67,8 @@ namespace ProyectoANF.Controllers
                 }),
                 TotalAguinaldo = todasLasPlanillas.Sum(p => p.Aguinaldo ?? 0),
                 // Para Bono Aguinaldo, también lo calculamos
-                TotalBonoAguinaldo = todasLasPlanillas.Sum(p => {
+                TotalBonoAguinaldo = todasLasPlanillas.Sum(p =>
+                {
                     var trabajador = p.Trabajador;
                     if (trabajador != null && p.Mes == 12)
                     {
@@ -87,7 +89,8 @@ namespace ProyectoANF.Controllers
                 TotalIsssEmpleado = todasLasPlanillas.Sum(p => p.Isss ?? 0),
                 TotalAfpEmpleado = todasLasPlanillas.Sum(p => p.Afp ?? 0),
                 TotalDepositar = todasLasPlanillas.Sum(p => p.SalarioNeto ?? 0),
-                TotalPlanillaUnica = todasLasPlanillas.Sum(p => {
+                TotalPlanillaUnica = todasLasPlanillas.Sum(p =>
+                {
                     decimal isssPatronal = (p.SalarioBruto ?? 0) > 1000 ? 75 : (p.SalarioBruto ?? 0) * 0.075m;
                     decimal afpPatronal = (p.SalarioBruto ?? 0) * 0.0875m;
                     return isssPatronal + afpPatronal + (p.Isss ?? 0) + (p.Afp ?? 0);
@@ -129,6 +132,38 @@ namespace ProyectoANF.Controllers
 
                     // Usar el servicio de cálculos para aplicar las fórmulas del Excel
                     decimal salarioBase = trabajador.SalarioBase;
+
+                    // Calcular incapacidad y permisos
+                    if (modelo.IncapacidadDias > 0)
+                    {
+                        modelo.Incapacidad = _calculationService.CalcularMontoIncapacidad(
+                            salarioBase,
+                            modelo.IncapacidadDias ?? 0,
+                            modelo.IncapacidadTipo ?? "Común");
+                    }
+                    else
+                    {
+                        modelo.Incapacidad = 0;
+                    }
+
+                    if (modelo.PermisosDias > 0)
+                    {
+                        modelo.Permisos = _calculationService.CalcularMontoPermisos(
+                            salarioBase,
+                            modelo.PermisosDias ?? 0,
+                            modelo.PermisosTipo ?? "Con Goce");
+
+                        // Ajustar días trabajados si hay permisos sin goce
+                        if (modelo.PermisosTipo == "Sin Goce")
+                        {
+                            modelo.DiasTrabajados -= (int)Math.Ceiling(modelo.PermisosDias ?? 0);
+                            if (modelo.DiasTrabajados < 0) modelo.DiasTrabajados = 0;
+                        }
+                    }
+                    else
+                    {
+                        modelo.Permisos = 0;
+                    }
 
                     // Calcular horas extras
                     modelo.HorasDiurnas = _calculationService.CalcularHorasDiurnas(salarioBase, modelo.HorasDiurnasCantidad ?? 0);
@@ -177,7 +212,9 @@ namespace ProyectoANF.Controllers
                                           (modelo.Vacaciones ?? 0) +
                                           (modelo.Aguinaldo ?? 0) +
                                           (modelo.Indemnizacion ?? 0) +
-                                          (modelo.Reintegro ?? 0);
+                                          (modelo.Reintegro ?? 0) +
+                                          (modelo.Incapacidad ?? 0) +
+                                          (modelo.Permisos ?? 0);
 
                     // Calcular monto cotizable para deducciones
                     decimal bonoVacaciones = 0;
@@ -275,8 +312,46 @@ namespace ProyectoANF.Controllers
                     planillaExistente.HorasNocturnasCantidad = modelo.HorasNocturnasCantidad;
                     planillaExistente.FeriadoCantidad = modelo.FeriadoCantidad;
                     planillaExistente.Reintegro = modelo.Reintegro;
-                    planillaExistente.Incapacidad = modelo.Incapacidad;
-                    planillaExistente.Permisos = modelo.Permisos;
+
+                    // Actualizar campos de incapacidad y permisos
+                    planillaExistente.IncapacidadDias = modelo.IncapacidadDias;
+                    planillaExistente.PermisosDias = modelo.PermisosDias;
+                    planillaExistente.IncapacidadTipo = modelo.IncapacidadTipo;
+                    planillaExistente.PermisosTipo = modelo.PermisosTipo;
+
+                    // Calcular incapacidad y permisos
+                    if (modelo.IncapacidadDias > 0)
+                    {
+                        planillaExistente.Incapacidad = _calculationService.CalcularMontoIncapacidad(
+                            salarioBase,
+                            modelo.IncapacidadDias ?? 0,
+                            modelo.IncapacidadTipo ?? "Común");
+                    }
+                    else
+                    {
+                        planillaExistente.Incapacidad = 0;
+                    }
+
+                    if (modelo.PermisosDias > 0)
+                    {
+                        planillaExistente.Permisos = _calculationService.CalcularMontoPermisos(
+                            salarioBase,
+                            modelo.PermisosDias ?? 0,
+                            modelo.PermisosTipo ?? "Con Goce");
+
+                        // Ajustar días trabajados si hay permisos sin goce
+                        if (modelo.PermisosTipo == "Sin Goce")
+                        {
+                            // Guardamos los días trabajados originales antes de ajustar
+                            int diasOriginales = planillaExistente.DiasTrabajados;
+                            planillaExistente.DiasTrabajados -= (int)Math.Ceiling(modelo.PermisosDias ?? 0);
+                            if (planillaExistente.DiasTrabajados < 0) planillaExistente.DiasTrabajados = 0;
+                        }
+                    }
+                    else
+                    {
+                        planillaExistente.Permisos = 0;
+                    }
 
                     // Calcular horas extras
                     planillaExistente.HorasDiurnas = _calculationService.CalcularHorasDiurnas(salarioBase, modelo.HorasDiurnasCantidad ?? 0);
@@ -335,7 +410,9 @@ namespace ProyectoANF.Controllers
                                           (planillaExistente.Vacaciones ?? 0) +
                                           (planillaExistente.Aguinaldo ?? 0) +
                                           (planillaExistente.Indemnizacion ?? 0) +
-                                          (planillaExistente.Reintegro ?? 0);
+                                          (planillaExistente.Reintegro ?? 0) +
+                                          (planillaExistente.Incapacidad ?? 0) +
+                                          (planillaExistente.Permisos ?? 0);
 
                     // Calcular monto cotizable para deducciones
                     decimal bonoVacaciones = 0;
@@ -508,6 +585,8 @@ namespace ProyectoANF.Controllers
                 modelo.Vacaciones = 0;
             }
 
+
+
             // Aguinaldo (solo en diciembre y solo si el mes de ingreso es 12)
             if (modelo.Mes == 12 && mesDeIngreso == 12)
             {
@@ -578,4 +657,5 @@ namespace ProyectoANF.Controllers
             modelo.SalarioNeto = modelo.SalarioBruto - modelo.Isss - modelo.Afp - modelo.Renta;
         }
     }
+
 }
