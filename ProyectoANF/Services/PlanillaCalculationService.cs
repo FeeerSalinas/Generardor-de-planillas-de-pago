@@ -71,12 +71,8 @@ namespace ProyectoANF.Services
         {
             if (mes != 12 || añosAntiguedad < 1) return 0;
 
-            if (añosAntiguedad <= 2)
-                return 0;
-            else if (añosAntiguedad < 5)
-                return (salarioBase / 2) * 0.05m;
-            else
-                return (salarioBase / 2) * 0.3m;
+            // Corregido: Aplicar 30% para todos los empleados con derecho a vacaciones (1+ año)
+            return (salarioBase / 2) * 0.3m;
         }
 
         /// <summary>
@@ -98,6 +94,7 @@ namespace ProyectoANF.Services
             decimal salarioDiario = salarioBase / 30;
             decimal salarioHora = salarioDiario / 8;
 
+            // Mantenido en 2.5 según solicitud
             return cantidadHoras * (salarioHora * 2.5m);
         }
 
@@ -107,13 +104,8 @@ namespace ProyectoANF.Services
         public decimal CalcularMontoCotizable(decimal salarioBase, decimal vacaciones, decimal bonoVacaciones,
                                              decimal horasDiurnas, decimal horasNocturnas, double añosAntiguedad)
         {
-            decimal montoCotizable = salarioBase + vacaciones + bonoVacaciones;
-
-            // Si tiene más de 8 años, incluir horas extra en el monto cotizable
-            if (añosAntiguedad > 8)
-            {
-                montoCotizable += horasDiurnas + horasNocturnas;
-            }
+            // Corregido: Incluir siempre las horas extra, sin importar la antigüedad
+            decimal montoCotizable = salarioBase + vacaciones + bonoVacaciones + horasDiurnas + horasNocturnas;
 
             return montoCotizable;
         }
@@ -141,10 +133,11 @@ namespace ProyectoANF.Services
         {
             decimal sobreElExceso = salarioBruto - (isss + afp);
 
-            if (sobreElExceso >= 0.01m && sobreElExceso <= 472)
+            // Tabla actualizada con la reforma (tramo II ahora inicia en $550 en lugar de $472)
+            if (sobreElExceso >= 0.01m && sobreElExceso <= 550)
                 return 0;
-            else if (sobreElExceso >= 472.01m && sobreElExceso <= 895.24m)
-                return (sobreElExceso - 472) * 0.1m + 17.67m;
+            else if (sobreElExceso >= 550.01m && sobreElExceso <= 895.24m)
+                return (sobreElExceso - 550) * 0.1m + 17.67m;
             else if (sobreElExceso >= 895.25m && sobreElExceso <= 2038.10m)
                 return (sobreElExceso - 895.24m) * 0.2m + 60;
             else if (sobreElExceso >= 2038.11m)
