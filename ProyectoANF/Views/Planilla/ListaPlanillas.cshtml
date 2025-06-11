@@ -78,6 +78,7 @@
                                     <th class="text-end">AFP Patronal</th>
                                     <th class="text-end">ISSS Empleado</th>
                                     <th class="text-end">AFP Empleado</th>
+                                    <th class="text-end">Descuento Renta </th>
                                     <th class="text-end">Total Depositar</th>
                                     <th class="text-end">Monto Planilla Única</th>
                                     <th class="text-center">Acciones</th>
@@ -168,6 +169,7 @@
                                         <td class="text-end">@(afpPatronal.ToString("C"))</td>
                                         <td class="text-end">@((item.Isss ?? 0).ToString("C"))</td>
                                         <td class="text-end">@((item.Afp ?? 0).ToString("C"))</td>
+                                        <td class="text-end">@((item.Renta ?? 0).ToString("C"))</td>
                                         <td class="text-end fw-bold text-success">@((item.SalarioNeto ?? 0).ToString("C"))</td>
                                         <td class="text-end">@(montoPlanillaUnica.ToString("C"))</td>
                                         <td class="text-center">
